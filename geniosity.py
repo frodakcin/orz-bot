@@ -8,3 +8,7 @@ async def print_geniosity(bot, message):
 async def react_geniosity(bot, message):
     emoji = get(bot.get_all_emojis(), name='geniosity')
     await bot.add_reaction(message, emoji)
+
+async def react_wtmoo(bot, message):
+    emoji = get(bot.get_all_emojis(), name='wtmoo')
+    await bot.add_reaction(message, emoji)
