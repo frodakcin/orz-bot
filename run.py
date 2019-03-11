@@ -25,11 +25,10 @@ class MyClient(discord.Client):
 				await self.send_message(message.channel, content[5:])
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
-		else:
-			if 'geniosity' in content.lower():
-				await react_geniosity(self, message)
-			if 'wtmoo' in content.lower():
-				await react_wtmoo(self, message)
+		elif 'geniosity' in content.lower():
+			await react_geniosity(self, message)
+		elif 'wtmoo' in content.lower():
+			await react_wtmoo(self, message)
 
 client = MyClient()
 client.run(input())
