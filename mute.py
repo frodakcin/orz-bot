@@ -38,13 +38,18 @@ def encode_Muted(x):
 		return (x.user, encode_datetime(x.endOfMute))
 	else:
 		raise TypeError("Object of type {dt.__class__.__name__} is not compatible with encode_Muted")
-
+def decode_Muted(x):
+	return Muted(x[0], datetime.datetime(x[1][0], x[1][1], x[1][2], x[1][3], x[1][4], x[1][5]))
 
 def save():
 	with open(MuteDataFilePath, "w") as write_file:
-		for x in muteList:
-			json.dump(x, write_file, default=encode_Muted, sort_keys=True, indent=2)
+		json.dump(muteList, write_file, default=encode_Muted, sort_keys=True, indent=2)
+def load():
+	with open(MuteDataFilePath, "r") as read_file:
+		muteList = json.load(read_file, object_hook=decode_Muted)
 
-muteList.append(Muted(1234, datetime.datetime(2009, 3, 10).now()))
-save()
+load()
+print (str(len(muteList)))
+for x in muteList:
+	print("user: {x.id}, " + str(x.endOfMute))
 
