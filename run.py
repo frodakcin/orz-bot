@@ -25,8 +25,8 @@ class MyClient(discord.Client):
 				await self.send_message(message.channel, content[5:])
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
-
-
+		elif 'geniosity' in content.lower():
+			await react_geniosity(self, message)s
 
 client = MyClient()
 client.run(input())
