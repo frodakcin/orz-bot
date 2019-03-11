@@ -1,6 +1,7 @@
 import discord
 from discord import *
 import asyncio
+from geniosity import *
 
 prefix = '!'
 
@@ -22,6 +23,8 @@ class MyClient(discord.Client):
 			content = content[len(prefix):]
 			if content.startswith("echo "):
 				await self.send_message(message.channel, content[5:])
+			elif content.lower().startswith('geniosity'):
+				await print_geniosity(self, message)
 
 
 
