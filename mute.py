@@ -78,7 +78,7 @@ def decode_Muted(x):
 	return Muted(x["user"], get_datetime(x["when"]))
 def save():
 	with open(MuteDataFilePath, "w") as write_file:
-		json.dump(muteList, write_file, default=encode_Muted, sort_keys=True, indent=2)
+		json.dump(muteList, write_file, default=encode_Muted, sort_keys=False, indent=2)
 def load():
 	global muteList
 	with open(MuteDataFilePath, "r") as read_file:

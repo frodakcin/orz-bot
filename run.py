@@ -18,20 +18,25 @@ class MyClient(discord.Client):
 	async def on_message(self, message):
 		if message.author == self.user:
 			return
-
+		
 		content = message.content
 		
+		if(censor.process(message)):
+			return;
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
 			if content.lower().startswith('mute'):
 				await mute(self, message)
-			if content.startswith("echo "):
+			elif content.startswith("echo "):
 				await self.send_message(message.channel, content[5:])
 			elif content.startswith('8ball'):
 				await make_prediction(self, message)
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
+			elif content.startswith("censor "):
+				await censor.censor_command(content[7:])
+
 
 client = MyClient()
 client.run(input())
