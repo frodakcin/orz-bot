@@ -1,6 +1,7 @@
 import discord
 from discord import *
 import asyncio
+from mute import *
 
 prefix = '!'
 
@@ -15,16 +16,12 @@ class MyClient(discord.Client):
 	async def on_message(self, message):
 		if message.author == self.user:
 			return
-		
+
 		content = message.content
 		
 		if content.startswith(prefix):
 			content = content[len(prefix):]
-			if content.startswith("echo "):
-				await self.send_message(message.channel, content[5:])
-
-
-
+			if content.lower().startswith('mute'):
+				await mute(self, message)
 client = MyClient()
 client.run(input())
-
