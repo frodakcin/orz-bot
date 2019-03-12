@@ -4,13 +4,22 @@ import random
 
 async def make_prediction(bot, message):
 	content = message.content
-	e = Embed(title=message.author.name, description=content[7:], 
+	parsed = content.lower()
+	e = Embed(title=message.author.name + ' asked:', description=content[7:], 
 		color=0x9999ff)
 
 	reponse = ''
-	response = get_random_message()
 
-	e.add_field(name='answer', value=response)
+	# rigged
+	if 'eyg' in parsed and 'pedo' in parsed:
+		response = 'Eyg is pedo.'
+	elif 'fishy' in parsed and 'geniosity' in parsed:
+		response = 'Fishy is geniosity.'
+	# not rigged
+	else:
+		response = get_random_message()
+
+	e.add_field(name='Answer:', value=response)
 	await bot.send_message(message.channel, embed=e)
 
 def get_random_message():
