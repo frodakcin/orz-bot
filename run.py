@@ -1,6 +1,7 @@
 import discord
 from discord import *
 import asyncio
+from mute import *
 from eight_ball import *
 from geniosity import *
 
@@ -23,6 +24,8 @@ class MyClient(discord.Client):
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
+			if content.lower().startswith('mute'):
+				await mute(self, message)
 			if content.startswith("echo "):
 				await self.send_message(message.channel, content[5:])
 			elif content.startswith('8ball'):
@@ -41,4 +44,3 @@ class MyClient(discord.Client):
 
 client = MyClient()
 client.run(input())
-
