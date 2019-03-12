@@ -32,15 +32,6 @@ class MyClient(discord.Client):
 				await make_prediction(self, message)
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
-		else:
-			if 'geniosity' in content.lower():
-				await react_geniosity(self, message)
-			if 'wtmoo' in content.lower():
-				await react_wtmoo(self, message)
-			if 'orz' in content.lower():
-				await react_orz(self, message)
-			if 'juicy' in content.lower():
-				await react_juicy(self, message)
 
 client = MyClient()
 client.run(input())
