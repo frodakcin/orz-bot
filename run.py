@@ -34,6 +34,8 @@ class MyClient(discord.Client):
 				await react_geniosity(self, message)
 			if 'wtmoo' in content.lower():
 				await react_wtmoo(self, message)
+			if 'orz' in content.lower():
+				await react_orz(self, message)
 
 client = MyClient()
 client.run(input())
