@@ -2,6 +2,8 @@ import discord
 from discord import *
 import asyncio
 from mute import *
+from eight_ball import *
+from geniosity import *
 
 prefix = '!'
 
@@ -20,8 +22,25 @@ class MyClient(discord.Client):
 		content = message.content
 		
 		if content.startswith(prefix):
+			bot_command = True
 			content = content[len(prefix):]
 			if content.lower().startswith('mute'):
 				await mute(self, message)
+			if content.startswith("echo "):
+				await self.send_message(message.channel, content[5:])
+			elif content.startswith('8ball'):
+				await make_prediction(self, message)
+			elif content.lower().startswith('geniosity'):
+				await print_geniosity(self, message)
+		else:
+			if 'geniosity' in content.lower():
+				await react_geniosity(self, message)
+			if 'wtmoo' in content.lower():
+				await react_wtmoo(self, message)
+			if 'orz' in content.lower():
+				await react_orz(self, message)
+			if 'juicy' in content.lower():
+				await react_juicy(self, message)
+
 client = MyClient()
 client.run(input())
