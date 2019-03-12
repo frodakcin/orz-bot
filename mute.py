@@ -83,7 +83,6 @@ def load():
 	global muteList
 	with open(MuteDataFilePath, "r") as read_file:
 		muteList = json.load(read_file, object_hook=decode_Muted)
-		print(len(muteList))
 #END IO
 
 
