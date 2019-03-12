@@ -18,7 +18,7 @@ class MyClient(discord.Client):
 	async def on_message(self, message):
 		if message.author == self.user:
 			return
-
+		
 		content = message.content
 		
 		if content.startswith(prefix):
@@ -26,7 +26,7 @@ class MyClient(discord.Client):
 			content = content[len(prefix):]
 			if content.lower().startswith('mute'):
 				await mute(self, message)
-			if content.startswith("echo "):
+			elif content.startswith("echo "):
 				await self.send_message(message.channel, content[5:])
 			elif content.startswith('8ball'):
 				await make_prediction(self, message)
