@@ -174,3 +174,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+# for VS Code Users
+.vscode/
