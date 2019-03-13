@@ -117,7 +117,4 @@ def load():
 		muteList = json.load(read_file, object_hook=decode_Muted)
 #END IO
 
-load()
-for x in muteList:
-	print(str(x.user) + ": " + str(x.endOfMute))
 
