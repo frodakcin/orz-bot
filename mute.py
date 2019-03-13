@@ -1,5 +1,5 @@
 import datetime
-from datetime import timedelta
+from datetime import *
 import json
 import discord
 from discord import *
@@ -117,9 +117,7 @@ def load():
 		muteList = json.load(read_file, object_hook=decode_Muted)
 #END IO
 
-"""
 load()
-print (str(len(muteList)))
 for x in muteList:
-	print("user: {x.id}, " + str(x.endOfMute))
-"""
+	print(str(x.user) + ": " + str(x.endOfMute))
+
