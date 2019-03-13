@@ -14,13 +14,13 @@ class Muted:
 		self.endOfMute = when
 
 	def __lt__ (self, other):
-		if(endOfMute != other.endOfMute):
-			return endOfMute < other.endOfMute
+		if(self.endOfMute != other.endOfMute):
+			return self.endOfMute < other.endOfMute
 		return self.user.id < other.user.id
 
 	def __gt__ (self, other):
-		if(endOfMute != other.endOfMute):
-			return endOfMute > other.endOfMute
+		if(self.endOfMute != other.endOfMute):
+			return self.endOfMute > other.endOfMute
 		return self.user.id > other.user.id
 
 	def increase_mute_length(self, penalty):
@@ -31,61 +31,54 @@ class Muted:
 
 def insertMuted(x):
 	if isinstance(x, Muted):
+		A = True
 		for i in range(len(muteList)):
-			if(x.endOfMute<=muteList[i].endOfMute):
-				muteList.insert(i,encode_Muted(x))
+			if(x < muteList[i]):
+				muteList.insert(i, x)
+				A = False
 				break
-		if(len(muteList)==0):
-			muteList.append(encode_Muted(x))
+		if(A):
+			muteList.append(x)
 		save()
 	else:
-		raise TypeError("You can only insert Muted objects.")
+		raise TypeError("You can only insert Muted objects!")
 
 
 async def mute(bot, message):
-	#try:
-	if(1==1):
-		content = (message.content).split()
-		name = content[1]
-		amount = int(content[2][:-1])
-		timeUnit = content[2][-1:]
-		if(timeUnit=='s'):
-			for i in range(len(muteList)):
-				if(decode_Muted(muteList[i]).user == name):
-					insertMuted(Muted(name, encode_datetime(Muted(muteList.pop(i)).endOfMute + timedelta(days=amount))))
-					await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more second(s).')
-					return
-			insertMuted(Muted(name, datetime.now() + timedelta(seconds=amount)))
-			await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' second(s).')
-		elif(timeUnit=='m'):
-			for i in range(len(muteList)):
-				if(decode_Muted(muteList[i]).user == name):
-					insertMuted(Muted(name, encode_datetime(Muted(muteList.pop(i)).endOfMute + timedelta(minutes=amount))))
-					await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more minute(s).')
-					return
-			insertMuted(Muted(name, datetime.now() + timedelta(minutes=amount)))
-
-			await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' minute(s).')
-		elif(timeUnit=='h'):
-			for i in range(len(muteList)):
-				if(decode_Muted(muteList[i]).user == name):
-					insertMuted(Muted(name, encode_datetime(Muted(muteList.pop(i)).endOfMute + timedelta(hours=amount))))
-					await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more hour(s).')
-					return
-			insertMuted(Muted(name, datetime.now() + timedelta(hours=amount)))
-			await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' hour(s).')
-		elif(timeUnit=='d'):
-			for i in range(len(muteList)):
-				if(decode_Muted(muteList[i]).user == name):
-					insertMuted(Muted(name, encode_datetime(Muted(muteList.pop(i)).endOfMute + timedelta(days=amount))))
-					await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more day(s).')
-					return
-			insertMuted(Muted(name, datetime.now() + timedelta(days=amount)))
-			await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' day(s).')
-		else:
-			raise ValueError
-	#except:
-		#await bot.send_message(message.channel, 'Invalid format.')
+	content = (message.content[5:]).split()
+	name = content[0]
+	amount = int(content[1][:-1])
+	timeUnit = content[1][-1:]
+	if(timeUnit=='s'):
+		for i in range(len(muteList)):
+			if(muteList[i].user == name):
+				insertMuted(Muted(name, muteList.pop(i).endOfMute + timedelta(seconds=amount)))
+				await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more second(s).')
+				return
+		insertMuted(Muted(name, datetime.now() + timedelta(seconds=amount)))
+		await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' second(s).')
+		
+	if(timeUnit=='m'):
+		for i in range(len(muteList)):
+			if(muteList[i].user == name):
+				insertMuted(Muted(name, muteList.pop(i).endOfMute + timedelta(minutes=amount)))
+				await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more minute(s).')
+				return
+		insertMuted(Muted(name, datetime.now() + timedelta(minutes=amount)))
+		await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' minute(s).')
+		
+	if(timeUnit=='h'):
+		for i in range(len(muteList)):
+			if(muteList[i].user == name):
+				insertMuted(Muted(name, muteList.pop(i).endOfMute + timedelta(hours=amount)))
+				await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more hour(s).')
+				return
+		insertMuted(Muted(name, datetime.now() + timedelta(hours=amount)))
+		await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' hour(s).')
+		
+	else:
+		await bot.send_message(message.channel, "Invalid Syntax!")
+		raise ValueError(timeUnit + " is not a valid Time Unit.");
 
 #START IO
 MuteDataFilePath = "mute.json"

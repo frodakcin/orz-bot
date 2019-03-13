@@ -21,7 +21,7 @@ class MyClient(discord.Client):
 		
 		if content.startswith(prefix):
 			content = content[len(prefix):]
-			if content.lower().startswith('mute'):
+			if content.lower().startswith("mute "):
 				await mute(self, message)
 client = MyClient()
 client.run(input())
