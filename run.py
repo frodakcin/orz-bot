@@ -5,6 +5,8 @@ from mute import *
 
 prefix = '!'
 
+
+
 class MyClient(discord.Client):
 	async def on_ready(self):
 		print('Logged in as')
@@ -18,12 +20,15 @@ class MyClient(discord.Client):
 			return
 
 		content = message.content
-		
+
+		await updateMutes(self)
+
 		if content.startswith(prefix):
 			content = content[len(prefix):]
 			if content.lower().startswith("mute "):
 				await mute(self, message)
 			elif content.lower().startswith("mutelist"):
 				await getMuteList(self, message)
+		
 client = MyClient()
 client.run(input())
