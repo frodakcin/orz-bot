@@ -30,7 +30,6 @@ class Muted:
 			return self.endOfMute > other.endOfMute
 		return self.user.id > other.user.id
 
-
 	def increase_mute_length(self, penalty):
 		self.endOfMute += penalty;
 
