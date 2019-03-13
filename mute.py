@@ -86,9 +86,9 @@ async def mute(bot, message):
 		raise ValueError(timeUnit + " is not a valid Time Unit.");
 		
 async def getMuteList(bot, message):
-	e = Embed(title="Mute List", description='This gives the time when users will be unmuted.',inline=False,)
-	for i in range(len(muteList)):
-		 e.add_field(name=muteList[i].user, value = Muted(muteList[i].user, muteList[i].endOfMute).toString(), inline=False)
+	e = Embed(title="Mute List", description='This gives the time when users will be unmuted.')
+	for i in muteList:
+		 e.add_field(name=i.user, value = Muted(i.user, i.endOfMute).toString(), inline=False)
 	await bot.send_message(message.channel, embed=e)
 	
 #START IO
