@@ -7,6 +7,8 @@ from geniosity import *
 
 prefix = '!'
 
+
+
 class MyClient(discord.Client):
 	async def on_ready(self):
 		print('Logged in as')
@@ -16,22 +18,26 @@ class MyClient(discord.Client):
 		await self.change_presence(game=discord.Game(name="Tmw orz", url="https://codeforces.com/profile/tmwilliamlin168", type=0), status=Status.online, afk=False)
 	
 	async def on_message(self, message):
-		if message.author == self.user:
+    if message.author == self.user:
 			return
 		
 		content = message.content
-		
+
+		await updateMutes(self)
+
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
-			if content.lower().startswith('mute'):
+			if content.lower().startswith("mute "):
 				await mute(self, message)
+			elif content.lower().startswith("mutelist"):
+				await getMuteList(self, message)
 			elif content.startswith("echo "):
 				await self.send_message(message.channel, content[5:])
 			elif content.startswith('8ball'):
 				await make_prediction(self, message)
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
-
+        
 client = MyClient()
 client.run(input())
