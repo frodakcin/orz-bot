@@ -23,5 +23,7 @@ class MyClient(discord.Client):
 			content = content[len(prefix):]
 			if content.lower().startswith("mute "):
 				await mute(self, message)
+			elif content.lower().startswith("mutelist"):
+				await getMuteList(self, message)
 client = MyClient()
 client.run(input())
