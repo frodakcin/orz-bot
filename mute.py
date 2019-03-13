@@ -106,10 +106,8 @@ def encode_Muted(x):
 		raise TypeError("Object of type {dt.__class__.__name__} is not compatible with encode_Muted")
 def get_datetime(x):
 	return datetime(x[0], x[1], x[2], x[3], x[4], x[5])
-
 def decode_Muted(x):
 	return Muted(x["user"], get_datetime(x["when"]))
-
 def save():
 	with open(MuteDataFilePath, "w") as write_file:
 		json.dump(muteList, write_file, default=encode_Muted, sort_keys=False, indent=2)
@@ -118,7 +116,6 @@ def load():
 	with open(MuteDataFilePath, "r") as read_file:
 		muteList = json.load(read_file, object_hook=decode_Muted)
 #END IO
-
 
 """
 load()
