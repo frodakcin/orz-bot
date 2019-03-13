@@ -7,8 +7,6 @@ from geniosity import *
 
 prefix = '!'
 
-
-
 class MyClient(discord.Client):
 	async def on_ready(self):
 		print('Logged in as')
@@ -18,9 +16,9 @@ class MyClient(discord.Client):
 		await self.change_presence(game=discord.Game(name="Tmw orz", url="https://codeforces.com/profile/tmwilliamlin168", type=0), status=Status.online, afk=False)
 	
 	async def on_message(self, message):
-    if message.author == self.user:
+		if message.author == self.user:
 			return
-		
+			
 		content = message.content
 
 		await updateMutes(self)
@@ -38,6 +36,17 @@ class MyClient(discord.Client):
 				await make_prediction(self, message)
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
-        
+		else:
+			if 'geniosity' in content:
+				await react_geniosity(self, message)
+			if 'wtmoo' in content:
+				await react_wtmoo(self, message)
+			if 'orz' in content:
+				await react_orz(self, message)
+			if 'juicy' in content:
+				await react_juicy(self, message)
+			if 'tmw' in content:
+				await react_tmw(self, message)
+
 client = MyClient()
 client.run(input())
