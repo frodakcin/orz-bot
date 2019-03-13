@@ -30,6 +30,7 @@ class Muted:
 			return self.endOfMute > other.endOfMute
 		return self.user.id > other.user.id
 
+
 	def increase_mute_length(self, penalty):
 		self.endOfMute += penalty;
 
@@ -114,8 +115,8 @@ async def updateMutes(bot):
 			break
 	save()
 
+
 #START IO
-MuteDataFilePath = "mute.json"
 def encode_datetime(dt):
 	if isinstance(dt, datetime):
 		return (dt.year, dt.month, dt.day, dt.hour, dt.minute, dt.second)
@@ -133,10 +134,11 @@ def decode_Muted(x):
 def save():
 	with open(MuteDataFilePath, "w") as write_file:
 		json.dump(muteList, write_file, default=encode_Muted, sort_keys=False, indent=2)
+
 def load():
 	global muteList
 	with open(MuteDataFilePath, "r") as read_file:
 		muteList = json.load(read_file, object_hook=decode_Muted)
 #END IO
-		
+
 load()
