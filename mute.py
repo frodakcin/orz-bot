@@ -62,6 +62,7 @@ async def mute(bot, message):
 	name = message.mentions[0].id
 	amount = int(content[1][:-1])
 	timeUnit = content[1][-1:]
+	
 	if(timeUnit=='s'):
 		for i in range(len(muteList)):
 			if(muteList[i].user == name):
@@ -134,7 +135,6 @@ def decode_Muted(x):
 def save():
 	with open(MuteDataFilePath, "w") as write_file:
 		json.dump(muteList, write_file, default=encode_Muted, sort_keys=False, indent=2)
-
 def load():
 	global muteList
 	with open(MuteDataFilePath, "r") as read_file:
