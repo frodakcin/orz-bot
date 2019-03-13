@@ -25,8 +25,10 @@ async def process(m):
 censorFile = "censor.json"
 
 async def censor_command(m):
-	if(m.startsWith(+)):
-		
+	if(m.startsWith('+')):
+		# add
+	elif(m.starsWith('-')):
+		# remove
 
 def save():
 	with open(censorFile, "w") as writeFile:
