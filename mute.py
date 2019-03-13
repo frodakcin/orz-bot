@@ -28,7 +28,12 @@ class Muted:
 
 	def toJSON(self):
 		return json.dumps(self, default=lambda o : o.__dict__, sort_keys=True, indent=4)
-
+	
+	def toString(self):
+		if(self.endOfMute.day == datetime.today().day):
+			return self.endOfMute.strftime("Today at %H:%M:%S")
+		return self.endOfMute.strftime("%B %d, %Y at %H:%M:%S")
+	
 def insertMuted(x):
 	if isinstance(x, Muted):
 		A = True
@@ -79,7 +84,13 @@ async def mute(bot, message):
 	else:
 		await bot.send_message(message.channel, "Invalid Syntax!")
 		raise ValueError(timeUnit + " is not a valid Time Unit.");
-
+		
+async def getMuteList(bot, message):
+	e = Embed(title="Mute List", description='This gives the time when users will be unmuted.',inline=False,)
+	for i in range(len(muteList)):
+		 e.add_field(name=muteList[i].user, value = Muted(muteList[i].user, muteList[i].endOfMute).toString(), inline=False)
+	await bot.send_message(message.channel, embed=e)
+	
 #START IO
 MuteDataFilePath = "mute.json"
 def encode_datetime(dt):
