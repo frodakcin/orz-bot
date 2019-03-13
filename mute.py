@@ -10,10 +10,10 @@ MutedRoleName = "muted"
 muteList = []
 
 def get_role(server_roles, target_name):
-   for each in server_roles:
-      if each.name == target_name:
-         return each
-   return None
+	for each in server_roles:
+		if each.name == target_name:
+			return each
+	return None
 
 class Muted:
 	def __init__(self, user, when):
