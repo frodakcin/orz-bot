@@ -4,6 +4,7 @@ import asyncio
 from mute import *
 from eight_ball import *
 from geniosity import *
+import censor
 
 prefix = '!'
 
@@ -21,21 +22,15 @@ class MyClient(discord.Client):
 		
 		content = message.content
 		
-		if(censor.process(message)):
-			return;
+		if await censor.isCensored(content.lower()):
+			print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
+			await self.delete_message(message)
+			return
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
-			if content.lower().startswith('mute'):
-				await mute(self, message)
-			elif content.startswith("echo "):
-				await self.send_message(message.channel, content[5:])
-			elif content.startswith('8ball'):
-				await make_prediction(self, message)
-			elif content.lower().startswith('geniosity'):
-				await print_geniosity(self, message)
-			elif content.startswith("censor "):
-				await censor.censor_command(content[7:])
+			if content.startswith("censor "):
+				await censor_command(content[7:])
 
 
 client = MyClient()
