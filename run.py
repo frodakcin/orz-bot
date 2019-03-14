@@ -30,7 +30,9 @@ class MyClient(discord.Client):
 			bot_command = True
 			content = content[len(prefix):]
 			if content.lower().startswith('mute '):
-				await mute(self, message)
+				await mute(self, message)			
+			elif content.lower().startswith("mutelist"):
+				await getMuteList(self, message)
 			elif content.startswith('echo '):
 				await self.send_message(message.channel, content[5:])
 			elif content.startswith('8ball'):
