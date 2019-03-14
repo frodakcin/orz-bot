@@ -22,7 +22,8 @@ class MyClient(discord.Client):
 			return
 		
 		content = message.content
-
+		
+		await updateMutes(self)
 		if message.channel.id == potdStatusChannelID:
 			await updateLeaderboard(self, message)
 
