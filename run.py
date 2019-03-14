@@ -41,7 +41,9 @@ class MyClient(discord.Client):
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
 			elif content.lower().startswith('leaderboard'):
-				await getContenderList(self, message)
+				await getContenderList(self, message)			
+			elif content.lower().startswith('points'):
+				await getContenderData(self, message)
 		else:
 			if 'geniosity' in content:
 				await react_geniosity(self, message)
