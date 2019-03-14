@@ -29,9 +29,9 @@ class MyClient(discord.Client):
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
-			if content.lower().startswith('mute'):
+			if content.lower().startswith('mute '):
 				await mute(self, message)
-			elif content.startswith("echo "):
+			elif content.startswith('echo '):
 				await self.send_message(message.channel, content[5:])
 			elif content.startswith('8ball'):
 				await make_prediction(self, message)
