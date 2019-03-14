@@ -46,7 +46,7 @@ def updateContender(x):
 		save()
 
 async def getContenderList(bot, message):
-	e = Embed(title="POTD Potd")
+	e = Embed(title="POTD Leaderboard")
 	for i in range(10):
 		try:
 			e.add_field(name= str(i+1)+". " + str(contenderList[i].username), value = str(contenderList[i].points)+" points", inline=False)
