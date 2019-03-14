@@ -5,6 +5,7 @@ from discord import *
 
 PotdDataFilePath = "potd.json"
 contenderList = []
+maxPoints = 1000000
 
 class Contender:
 	def __init__(self, user, name, pts):
@@ -15,15 +16,18 @@ class Contender:
 	def __lt__ (self, other):
 		if(self.points != other.points):
 			return self.points < other.points
-		return True
+		return False
 
 	def __gt__ (self, other):
 		if(self.points != other.points):
 			return self.points > other.points
-		return True
+		return False
 
 	def updatePoints(self, gained):
-		self.points += gained;
+		newPoints = min(self.points + gained,maxPoints)
+		if(newPoints<0):
+			newPoints = 0
+		self.points = newPoints
 
 	def toJSON(self):
 		return json.dumps(self, default=lambda o : o.__dict__, sort_keys=True, indent=4)
@@ -46,7 +50,7 @@ def updateContender(x):
 		save()
 
 async def getContenderList(bot, message):
-	e = Embed(title="POTD Potd")
+	e = Embed(title="POTD Leaderboard")
 	for i in range(10):
 		try:
 			e.add_field(name= str(i+1)+". " + str(contenderList[i].username), value = str(contenderList[i].points)+" points", inline=False)
@@ -54,11 +58,20 @@ async def getContenderList(bot, message):
 			break
 	await bot.send_message(message.channel, embed=e)
 
+async def getContenderData(bot, message):
+	name = message.mentions[0].id
+	for i in range(len(contenderList)):
+		if(contenderList[i].user == Contender(name,name,0).user):
+			await bot.send_message(message.channel, contenderList[i].username+" has "+str(contenderList[i].points)+" points for POTD")
+
+
 async def updateLeaderboard(bot, message):
 	try:
 		name = message.mentions[0].id
 		nameToShow = message.mentions[0].display_name
-		score = int(message.content.split()[2])
+		score = min(int(message.content.split()[2]),maxPoints)
+		if(score<0):
+			score = 0
 		updateContender(Contender(name, nameToShow, score))
 	except:
 		pass
