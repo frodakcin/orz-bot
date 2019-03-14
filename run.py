@@ -39,6 +39,17 @@ class MyClient(discord.Client):
 				await print_geniosity(self, message)
 			elif content.lower().startswith('leaderboard'):
 				await getContenderList(self, message)
+		else:
+			if 'geniosity' in content:
+				await react_geniosity(self, message)
+			if 'wtmoo' in content:
+				await react_wtmoo(self, message)
+			if 'orz' in content:
+				await react_orz(self, message)
+			if 'juicy' in content:
+				await react_juicy(self, message)
+			if 'tmw' in content:
+				await react_tmw(self, message)
 
 client = MyClient()
 client.run(input())
