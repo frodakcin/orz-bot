@@ -10,14 +10,15 @@ MutedRoleName = "muted"
 muteList = []
 
 def get_role(server_roles, target_name):
-   for each in server_roles:
-      if each.name == target_name:
-         return each
-   return None
+	for each in server_roles:
+		if each.name == target_name:
+			return each
+	return None
 
 class Muted:
-	def __init__(self, user, when):
+	def __init__(self, user, name, when):
 		self.user = user
+		self.name = name
 		self.endOfMute = when
 
 	def __lt__ (self, other):
@@ -29,7 +30,6 @@ class Muted:
 		if(self.endOfMute != other.endOfMute):
 			return self.endOfMute > other.endOfMute
 		return self.user.id > other.user.id
-
 
 	def increase_mute_length(self, penalty):
 		self.endOfMute += penalty;
@@ -60,36 +60,38 @@ def insertMuted(x):
 async def mute(bot, message):
 	content = (message.content[5:]).split()
 	name = message.mentions[0].id
+	username = message.mentions[0].display_name
 	amount = int(content[1][:-1])
 	timeUnit = content[1][-1:]
+	
 	if(timeUnit=='s'):
 		for i in range(len(muteList)):
 			if(muteList[i].user == name):
-				insertMuted(Muted(name, muteList.pop(i).endOfMute + timedelta(seconds=amount)))
-				await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more second(s).')
+				insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(seconds=amount)))
+				await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' more second(s).')
 				return
-		insertMuted(Muted(name, datetime.now() + timedelta(seconds=amount)))
-		await bot.send_message(message.channel, "<@"+name+'> has been muted for '+str(amount)+' second(s).')
+		insertMuted(Muted(name, username, datetime.now() + timedelta(seconds=amount)))
+		await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' second(s).')
 		await bot.add_roles(message.mentions[0], get_role(bot.get_server(ServerID).roles, MutedRoleName))
 		
 	elif(timeUnit=='m'):
 		for i in range(len(muteList)):
 			if(muteList[i].user == name):
-				insertMuted(Muted(name, muteList.pop(i).endOfMute + timedelta(minutes=amount)))
-				await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more minute(s).')
+				insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(minutes=amount)))
+				await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' more minute(s).')
 				return
-		insertMuted(Muted(name, datetime.now() + timedelta(minutes=amount)))
-		await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' minute(s).')
+		insertMuted(Muted(name, username, datetime.now() + timedelta(minutes=amount)))
+		await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' minute(s).')
 		await bot.add_roles(message.mentions[0], get_role(bot.get_server(ServerID).roles, MutedRoleName))
 
 	elif(timeUnit=='h'):
 		for i in range(len(muteList)):
 			if(muteList[i].user == name):
-				insertMuted(Muted(name, muteList.pop(i).endOfMute + timedelta(hours=amount)))
-				await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' more hour(s).')
+				insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(hours=amount)))
+				await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' more hour(s).')
 				return
-		insertMuted(Muted(name, datetime.now() + timedelta(hours=amount)))
-		await bot.send_message(message.channel, name+' has been muted for '+str(amount)+' hour(s).')
+		insertMuted(Muted(name, username, datetime.now() + timedelta(hours=amount)))
+		await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' hour(s).')
 		await bot.add_roles(message.mentions[0], get_role(bot.get_server(ServerID).roles, MutedRoleName))
 		
 	else:
@@ -97,9 +99,9 @@ async def mute(bot, message):
 		raise ValueError(timeUnit + " is not a valid Time Unit.");
 
 async def getMuteList(bot, message):
-	e = Embed(title="Mute List", description='This gives the time when users will be unmuted.')
+	e = Embed(title="Mute List")
 	for i in range(len(muteList)):
-		 e.add_field(name=muteList[i].user, value = Muted(muteList[i].user, muteList[i].endOfMute).toString(), inline=False)
+		 e.add_field(name=muteList[i].name, value = Muted(muteList[i].user, muteList[i].name, muteList[i].endOfMute).toString(), inline=False)
 	await bot.send_message(message.channel, embed=e)
 
 async def updateMutes(bot):
@@ -124,17 +126,16 @@ def encode_datetime(dt):
 		raise TypeError("Object of type {dt.__class__.__name__} is not compatible with encode_datetime")
 def encode_Muted(x):
 	if isinstance(x, Muted):
-		return {"user": (x.user), "when": encode_datetime(x.endOfMute)}
+		return {"user": (x.user), "name": (x.name), "when": encode_datetime(x.endOfMute)}
 	else:
 		raise TypeError("Object of type {dt.__class__.__name__} is not compatible with encode_Muted")
 def get_datetime(x):
 	return datetime(x[0], x[1], x[2], x[3], x[4], x[5])
 def decode_Muted(x):
-	return Muted(x["user"], get_datetime(x["when"]))
+	return Muted(x["user"], x["name"], get_datetime(x["when"]))
 def save():
 	with open(MuteDataFilePath, "w") as write_file:
 		json.dump(muteList, write_file, default=encode_Muted, sort_keys=False, indent=2)
-
 def load():
 	global muteList
 	with open(MuteDataFilePath, "r") as read_file:
