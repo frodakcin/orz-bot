@@ -30,7 +30,7 @@ class MyClient(discord.Client):
 			bot_command = True
 			content = content[len(prefix):]
 			if content.startswith("censor "):
-				await censor_command(content[7:])
+				await censor.censor_command(self, message.channel, content[7:])
 
 
 client = MyClient()

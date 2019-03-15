@@ -1,18 +1,40 @@
 [
-  [
-    "prodak",
-    "orz"
-  ],
-  [
-    "twice",
-    "bad"
-  ],
-  [
-    "tmw",
-    "shit"
-  ],
-  [
-    "tmw",
-    "bad"
-  ]
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "twice",
+      "bad"
+    ],
+    "without": [
+      "not"
+    ]
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "twice",
+      "shit"
+    ],
+    "without": [
+      "not"
+    ]
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "orz"
+    ],
+    "without": [
+      "tmw"
+    ]
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "god"
+    ],
+    "without": [
+      "tmw"
+    ]
+  }
 ]
