@@ -4,6 +4,7 @@ import asyncio
 from mute import *
 from eight_ball import *
 from geniosity import *
+import censor
 from potd import *
 
 prefix = '!'
@@ -23,10 +24,16 @@ class MyClient(discord.Client):
 		
 		content = message.content
 		
-		await updateMutes(self)
+		await updateMutes(self)	
+		
+		if censor.enabled:
+			if await censor.isCensored(content.lower()):
+				print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
+				await self.delete_message(message)
+				return
 		if message.channel.id == potdStatusChannelID:
 			await updateLeaderboard(self, message)
-
+		
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
@@ -44,6 +51,9 @@ class MyClient(discord.Client):
 				await getContenderList(self, message)			
 			elif content.lower().startswith('points'):
 				await getContenderData(self, message)
+			elif content.startswith("censor "):
+				if censor.enabled:
+					await censor.censor_command(self, message.channel, content[7:])
 		else:
 			if 'geniosity' in content:
 				await react_geniosity(self, message)

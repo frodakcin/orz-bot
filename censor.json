@@ -1,0 +1,36 @@
+[
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "orz"
+    ],
+    "without": [
+      "tmw"
+    ]
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "god"
+    ],
+    "without": [
+      "tmw"
+    ]
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "twice",
+      "bad"
+    ],
+    "without": []
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "twice",
+      "shit"
+    ],
+    "without": []
+  }
+]
