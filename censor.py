@@ -104,10 +104,26 @@ async def addRule(client, channel, x):
 	censorRules.append(SubstrIncludeWithout(i, w))
 	saveCensor()
 
+async def delRule(client, channel, x):
+	if len(x) != 1:
+		await client.send_message(channel, "Syntax Error!")
+	try:
+		x = int(x[0])
+	except:
+		await client.send_message(channel, "Syntax Error!")
+		return
+	if x < 0 or x >= len(censorRules):
+		await client.send_message(channel, "Index out of bounds!")
+		return
+	censorRules.pop(x)
+	saveCensor()
+
 async def censor_command(client, channel, m):
 	x = m.split()
 	if x[0] == '+' or x[0] == "add":
 		return await addRule(client, channel, x[1:])
+	if x[0] == '-' or x[0] == "del":
+		return await delRule(client, channel, x[1:])
 
 def saveCensor():
 	with open(censorFile, "w") as writeFile:

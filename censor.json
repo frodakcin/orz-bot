@@ -2,26 +2,6 @@
   {
     "type": "SubstrIncludeWithout",
     "include": [
-      "twice",
-      "bad"
-    ],
-    "without": [
-      "not"
-    ]
-  },
-  {
-    "type": "SubstrIncludeWithout",
-    "include": [
-      "twice",
-      "shit"
-    ],
-    "without": [
-      "not"
-    ]
-  },
-  {
-    "type": "SubstrIncludeWithout",
-    "include": [
       "orz"
     ],
     "without": [
@@ -36,5 +16,13 @@
     "without": [
       "tmw"
     ]
+  },
+  {
+    "type": "SubstrIncludeWithout",
+    "include": [
+      "tmw",
+      "orz"
+    ],
+    "without": []
   }
 ]
