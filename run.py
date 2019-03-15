@@ -48,7 +48,9 @@ class MyClient(discord.Client):
 			elif content.lower().startswith('geniosity'):
 				await print_geniosity(self, message)
 			elif content.lower().startswith('leaderboard'):
-				await getContenderList(self, message)
+				await getContenderList(self, message)			
+			elif content.lower().startswith('points'):
+				await getContenderData(self, message)
 			elif content.startswith("censor "):
 				if censor.enabled:
 					await censor.censor_command(self, message.channel, content[7:])
