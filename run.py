@@ -22,15 +22,18 @@ class MyClient(discord.Client):
 		
 		content = message.content
 		
-		if await censor.isCensored(content.lower()):
-			print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
-			await self.delete_message(message)
-			return
+		if censor.enabled:
+			if await censor.isCensored(content.lower()):
+				print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
+				await self.delete_message(message)
+				return
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
 			if content.startswith("censor "):
-				await censor.censor_command(self, message.channel, content[7:])
+				if censor.enabled:
+					await censor.censor_command(self, message.channel, content[7:])
+			
 
 
 client = MyClient()
