@@ -24,16 +24,16 @@ class MyClient(discord.Client):
 		
 		content = message.content
 		
-
 		await updateMutes(self)	
-    if censor.enabled:
+		
+		if censor.enabled:
 			if await censor.isCensored(content.lower()):
 				print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
 				await self.delete_message(message)
 				return
 		if message.channel.id == potdStatusChannelID:
-			await updateLeaderboard(self, message)f
-
+			await updateLeaderboard(self, message)
+		
 		if content.startswith(prefix):
 			bot_command = True
 			content = content[len(prefix):]
