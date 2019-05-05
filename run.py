@@ -1,7 +1,6 @@
-import discord
-from discord import *
-import requests
 import asyncio
+import requests
+from discord import Client, Status
 from mute import *
 from eight_ball import *
 from geniosity import *
@@ -10,16 +9,16 @@ from potd import *
 
 prefix = '!'
 potdStatusChannelID = '518297095099121665'
-token = # remove when upload
+token = ''  # remove when upload
 
 
-class MyClient(discord.Client):
+class MyClient(Client):
     async def on_ready(self):
         print('Logged in as')
         print(self.user.name)
         print(self.user.id)
         print('------')
-        raw = open(PotdDataFilePath, 'w')
+        raw = open(POTD_DATA_FILE_PATH, 'w')
         raw.write('[\n]')
         raw.close()
         messages = json.loads(requests.get(
@@ -32,10 +31,10 @@ class MyClient(discord.Client):
                 content = var[:var.index('pts')].strip()
             else:
                 content = var.strip()
-            score = min(int(content.split()[-1]), maxPoints)
+            score = min(int(content.split()[-1]), MAX_POINTS)
             # if score < 0:
             #     score = 0
-            updateContender(Contender(name, nameToShow, score))
+            update_contender(Contender(name, nameToShow, score))
         load()
         await self.change_presence(game=discord.Game(name='tmw orz', url='https://codeforces.com/profile/tmwilliamlin168', type=0), status=Status.online, afk=False)
 

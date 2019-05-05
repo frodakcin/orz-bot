@@ -1,10 +1,9 @@
 import json
-import discord
-from discord import *
+from discord import Embed
 
-PotdDataFilePath = 'potd.json'
-contenderList = []
-maxPoints = 1000000
+POTD_DATA_FILE_PATH = 'potd.json'
+CONTENDER_LIST = []
+MAX_POINTS = 1000000
 
 
 class Contender:
@@ -14,40 +13,44 @@ class Contender:
         self.points = pts
 
     def __lt__(self, other):
-        if(self.points != other.points):
+        if self.points != other.points:
             return self.points < other.points
         return False
 
     def __gt__(self, other):
-        if(self.points != other.points):
+        if self.points != other.points:
             return self.points > other.points
         return False
 
-    def updatePoints(self, gained):
-        newPoints = min(self.points + gained, maxPoints)
-        if(newPoints < 0):
-            newPoints = 0
-        self.points = newPoints
+    def update_points(self, gained):
+        new_points = min(self.points + gained, MAX_POINTS)
+        if new_points < 0:
+            new_points = 0
+        self.points = new_points
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
+    def to_JSON(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__,
+            sort_keys=True, indent=4
+        )
 
 
-def updateContender(x):
+def update_contender(x):
     if isinstance(x, Contender):
-        for i in range(len(contenderList)):
-            if(contenderList[i].user == x.user):
-                x.updatePoints(contenderList[i].points)
-                del contenderList[i]
+        for i in range(len(CONTENDER_LIST)):
+            if CONTENDER_LIST[i].user == x.user:
+                x.update_points(CONTENDER_LIST[i].points)
+                del CONTENDER_LIST[i]
                 break
         A = True
-        for i in range(len(contenderList)):
-            if(x > contenderList[i]):
-                contenderList.insert(i, x)
+        for i in range(len(CONTENDER_LIST)):
+            if x > CONTENDER_LIST[i]:
+                CONTENDER_LIST.insert(i, x)
                 A = False
                 break
-        if(A):
-            contenderList.append(x)
+        if A:
+            CONTENDER_LIST.append(x)
         save()
 
 
@@ -55,8 +58,8 @@ async def getContenderList(bot, message):
     e = Embed(title='POTD Leaderboard')
     for i in range(10):
         try:
-            e.add_field(name=f'str(i+1). {contenderList[i].username}',
-                        value=f'{contenderList[i].points} points',
+            e.add_field(name=f'str(i+1). {CONTENDER_LIST[i].username}',
+                        value=f'{CONTENDER_LIST[i].points} points',
                         inline=False)
         except:
             break
@@ -65,10 +68,12 @@ async def getContenderList(bot, message):
 
 async def getContenderData(bot, message):
     name = message.mentions[0].id
-    for i in range(len(contenderList)):
-        if(contenderList[i].user == Contender(name, name, 0).user):
-            await bot.send_message(message.channel,
-                                   f'{contenderList[i].username} has {contenderList[i].points} points for POTD')
+    for i in CONTENDER_LIST:
+        if i.user == Contender(name, name, 0).user:
+            await bot.send_message(
+                message.channel,
+                f'{i.username} has {i.points} points for POTD',
+            )
 
 
 async def updateLeaderboard(bot, message):
@@ -79,36 +84,36 @@ async def updateLeaderboard(bot, message):
             content = message.content[:message.content.index('pts')].strip()
         except:
             content = message.content.strip()
-        score = min(int(content.split()[-1]), maxPoints)
-        if(score < 0):
+        score = min(int(content.split()[-1]), MAX_POINTS)
+        if score < 0:
             score = 0
-        updateContender(Contender(name, nameToShow, score))
+        update_contender(Contender(name, nameToShow, score))
     except:
         pass
 
 # START IO
 
 
-def encode_Contender(x):
+def encode_contender(x):
     if isinstance(x, Contender):
         return {'user': (x.user), 'username': (x.username), 'pts': (x.points)}
     else:
         raise TypeError(
-            'Object of type {dt.__class__.__name__} is not compatible with encode_Contender')
+            'Object of type {dt.__class__.__name__} is not compatible with encode_contender')
 
 
-def decode_Contender(x):
+def decode_contender(x):
     return Contender(x['user'], x['username'], x['pts'])
 
 
 def save():
-    with open(PotdDataFilePath, 'w') as write_file:
-        json.dump(contenderList, write_file,
-                  default=encode_Contender, sort_keys=False, indent=2)
+    with open(POTD_DATA_FILE_PATH, 'w') as write_file:
+        json.dump(CONTENDER_LIST, write_file,
+                  default=encode_contender, sort_keys=False, indent=2)
 
 
 def load():
-    global contenderList
-    with open(PotdDataFilePath, 'r') as read_file:
-        contenderList = json.load(read_file, object_hook=decode_Contender)
+    global CONTENDER_LIST
+    with open(POTD_DATA_FILE_PATH, 'r') as read_file:
+        CONTENDER_LIST = json.load(read_file, object_hook=decode_contender)
 # END IO
