@@ -1,4 +1,3 @@
-
 import json
 import discord
 from discord import *
@@ -69,7 +68,11 @@ async def updateLeaderboard(bot, message):
 	try:
 		name = message.mentions[0].id
 		nameToShow = message.mentions[0].display_name
-		score = min(int(message.content.split()[2]),maxPoints)
+		try:
+			content=message.content[:message.content.index('pts')].strip()
+		except:
+			content=message.content.strip()
+		score = min(int(content.split()[-1]),maxPoints)
 		if(score<0):
 			score = 0
 		updateContender(Contender(name, nameToShow, score))
@@ -92,5 +95,3 @@ def load():
 	with open(PotdDataFilePath, "r") as read_file:
 		contenderList = json.load(read_file, object_hook=decode_Contender)
 #END IO
-
-load()

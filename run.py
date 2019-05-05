@@ -1,5 +1,6 @@
 import discord
 from discord import *
+import requests
 import asyncio
 from mute import *
 from eight_ball import *
@@ -8,22 +9,37 @@ import censor
 from potd import *
 
 prefix = '!'
-potdStatusChannelID = '555527539779567657'
-
+potdStatusChannelID = '518297095099121665'
+token = #remove when upload
 class MyClient(discord.Client):
 	async def on_ready(self):
 		print('Logged in as')
 		print(self.user.name)
 		print(self.user.id)
 		print('------')
+		raw = open(PotdDataFilePath, "w")
+		raw.write("[\n]")
+		raw.close()
+		messages = json.loads(requests.get("https://discordapp.com/api/v6/channels/" + potdStatusChannelID + "/messages", headers={"authorization": token}).text)
+		for i in messages:
+			var = i['content']
+			name = i['mentions'][0]['id']
+			nameToShow = i['mentions'][0]['username']
+			if('pts'in var):
+				content=var[:var.index('pts')].strip()
+			else:
+				content=var.strip()
+			score = min(int(content.split()[-1]),maxPoints)
+			if(score<0):
+				score = 0
+			updateContender(Contender(name, nameToShow, score))
+		load()
 		await self.change_presence(game=discord.Game(name="Tmw orz", url="https://codeforces.com/profile/tmwilliamlin168", type=0), status=Status.online, afk=False)
 	
 	async def on_message(self, message):
 		if message.author == self.user:
 			return
-		
 		content = message.content
-		
 		await updateMutes(self)	
 		
 		if censor.enabled:
@@ -32,6 +48,7 @@ class MyClient(discord.Client):
 				await self.delete_message(message)
 				return
 		if message.channel.id == potdStatusChannelID:
+			print("message recieved")
 			await updateLeaderboard(self, message)
 		
 		if content.startswith(prefix):
@@ -67,4 +84,4 @@ class MyClient(discord.Client):
 				await react_tmw(self, message)
 
 client = MyClient()
-client.run(input())
+client.run(token)
