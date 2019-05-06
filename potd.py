@@ -59,9 +59,13 @@ async def getContenderList(bot, message):
 
 async def getContenderData(bot, message):
 	name = message.mentions[0].id
+	found = False
 	for i in range(len(contenderList)):
 		if(contenderList[i].user == Contender(name,name,0).user):
+			found = True
 			await bot.send_message(message.channel, contenderList[i].username+" has "+str(contenderList[i].points)+" points for POTD")
+	if(not found):
+		await bot.send_message(message.channel, message.mentions[0].display_name+" has 0 points for POTD")
 
 
 async def updateLeaderboard(bot, message):
@@ -90,8 +94,10 @@ def decode_Contender(x):
 def save():
 	with open(PotdDataFilePath, "w") as write_file:
 		json.dump(contenderList, write_file, default=encode_Contender, sort_keys=False, indent=2)
-def load():
-	global contenderList
-	with open(PotdDataFilePath, "r") as read_file:
-		contenderList = json.load(read_file, object_hook=decode_Contender)
+#def load():
+#	global contenderList
+#	with open(PotdDataFilePath, "r") as read_file:
+#		contenderList = json.load(read_file, object_hook=decode_Contender)
 #END IO
+
+#load()
