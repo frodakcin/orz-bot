@@ -60,6 +60,10 @@ class MyClient(discord.Client):
     async def on_message(self, message):
         if message.author == self.user:
             return
+        if(message.author.id=="367469002374774786"): #imax id
+            await react_headpat(self, message)
+        if(message.author.id=="196783755061362689"): #fishy id
+            await react_geniosity(self, message)
         content = message.content
         await updateMutes(self)
 
@@ -75,7 +79,7 @@ class MyClient(discord.Client):
         if content.startswith(prefix):
             bot_command = True
             content = content[len(prefix):]
-            if content.lower().startswith('mute '):
+            if content.lower().startswith('mute ') and ("moderator" in [y.name.lower() for y in message.author.roles] or "admin" in [y.name.lower() for y in message.author.roles]):
                 await mute(self, message)
             elif content.lower().startswith("mutelist"):
                 await getMuteList(self, message)
@@ -103,6 +107,8 @@ class MyClient(discord.Client):
                 await react_wtmoo(self, message)
             if 'orz' in content:
                 await react_orz(self, message)
+            if 'pat' in content:
+                await react_headpat(self, message)
 
 
 client = MyClient()

@@ -5,8 +5,8 @@ import discord
 from discord import *
 
 MuteDataFilePath = "mute.json"
-ServerID = "554441113646399530"
-MutedRoleName = "muted"
+ServerID = "516125324711297024"
+MutedRoleName = "Muted"
 muteList = []
 
 def get_role(server_roles, target_name):
@@ -58,6 +58,8 @@ def insertMuted(x):
 
 
 async def mute(bot, message):
+	if("moderator" in [y.name.lower() for y in message.author.roles] or "admin" in [y.name.lower() for y in message.author.roles]):
+		return
 	content = (message.content[5:]).split()
 	name = message.mentions[0].id
 	username = message.mentions[0].display_name
