@@ -79,7 +79,11 @@ class MyClient(discord.Client):
         if content.startswith(prefix):
             bot_command = True
             content = content[len(prefix):]
-            if content.lower().startswith('mute ') and ("moderator" in [y.name.lower() for y in message.author.roles] or "admin" in [y.name.lower() for y in message.author.roles]):
+            if content.lower().startswith('mute ') and message.author.id == message.mentions[0].id:
+                await mute(self, message)
+            if content.lower().startswith('mute ') and ("moderator" in [y.name.lower() for y in message.author.roles]
+                                                        or "admin" in [y.name.lower() for y in message.author.roles]
+                                                        or "moot-maestro" in [y.name.lower() for y in message.author.roles]):
                 await mute(self, message)
             elif content.lower().startswith("mutelist"):
                 await getMuteList(self, message)
