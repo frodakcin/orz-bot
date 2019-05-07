@@ -11,7 +11,7 @@ import time
 
 prefix = '!'
 potdStatusChannelID = '518297095099121665'
-token = # remove when upload
+token =  # remove when upload
 
 
 class MyClient(discord.Client):

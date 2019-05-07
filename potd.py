@@ -1,10 +1,10 @@
-
 import json
 import discord
 from discord import *
 
 PotdDataFilePath = "potd.json"
 contenderList = []
+maxPoints = 1000000
 
 class Contender:
 	def __init__(self, user, name, pts):
@@ -15,15 +15,18 @@ class Contender:
 	def __lt__ (self, other):
 		if(self.points != other.points):
 			return self.points < other.points
-		return True
+		return False
 
 	def __gt__ (self, other):
 		if(self.points != other.points):
 			return self.points > other.points
-		return True
+		return False
 
 	def updatePoints(self, gained):
-		self.points += gained;
+		newPoints = min(self.points + gained,maxPoints)
+		if(newPoints<0):
+			newPoints = 0
+		self.points = newPoints
 
 	def toJSON(self):
 		return json.dumps(self, default=lambda o : o.__dict__, sort_keys=True, indent=4)
@@ -54,11 +57,28 @@ async def getContenderList(bot, message):
 			break
 	await bot.send_message(message.channel, embed=e)
 
+async def getContenderData(bot, message):
+	name = message.mentions[0].id
+	found = False
+	for i in range(len(contenderList)):
+		if(contenderList[i].user == Contender(name,name,0).user):
+			found = True
+			await bot.send_message(message.channel, contenderList[i].username+" has "+str(contenderList[i].points)+" points for POTD")
+	if(not found):
+		await bot.send_message(message.channel, message.mentions[0].display_name+" has 0 points for POTD")
+
+
 async def updateLeaderboard(bot, message):
 	try:
 		name = message.mentions[0].id
 		nameToShow = message.mentions[0].display_name
-		score = int(message.content.split()[2])
+		try:
+			content=message.content[:message.content.index('pts')].strip()
+		except:
+			content=message.content.strip()
+		score = min(int(content.split()[-1]),maxPoints)
+		if(score<0):
+			score = 0
 		updateContender(Contender(name, nameToShow, score))
 	except:
 		pass
@@ -74,10 +94,10 @@ def decode_Contender(x):
 def save():
 	with open(PotdDataFilePath, "w") as write_file:
 		json.dump(contenderList, write_file, default=encode_Contender, sort_keys=False, indent=2)
-def load():
-	global contenderList
-	with open(PotdDataFilePath, "r") as read_file:
-		contenderList = json.load(read_file, object_hook=decode_Contender)
+#def load():
+#	global contenderList
+#	with open(PotdDataFilePath, "r") as read_file:
+#		contenderList = json.load(read_file, object_hook=decode_Contender)
 #END IO
 
-load()
+#load()
