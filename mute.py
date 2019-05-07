@@ -58,7 +58,9 @@ def insertMuted(x):
 
 
 async def mute(bot, message):
-	if("moderator" in [y.name.lower() for y in message.author.roles] or "admin" in [y.name.lower() for y in message.author.roles]):
+	if("moderator" in [y.name.lower() for y in message.mentions[0].roles]
+			or "admin" in [y.name.lower() for y in message.mentions[0].roles]
+			or "moot-maestro" in [y.name.lower() for y in message.mentions[0].roles]):
 		return
 	content = (message.content[5:]).split()
 	name = message.mentions[0].id
