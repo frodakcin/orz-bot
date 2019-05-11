@@ -58,16 +58,21 @@ def insertMuted(x):
 
 
 async def mute(bot, message):
-	if("moderator" in [y.name.lower() for y in message.mentions[0].roles]
+	if(("moderator" in [y.name.lower() for y in message.mentions[0].roles]
 			or "admin" in [y.name.lower() for y in message.mentions[0].roles]
-			or "moot-maestro" in [y.name.lower() for y in message.mentions[0].roles]):
+			or "moot-maestro" in [y.name.lower() for y in message.mentions[0].roles]
+			or "orz bot" in [y.name.lower() for y in message.mentions[0].roles])
+			and message.mentions[0].id != message.author.id):
 		return
 	content = (message.content[5:]).split()
 	name = message.mentions[0].id
 	username = message.mentions[0].display_name
 	amount = int(content[1][:-1])
 	timeUnit = content[1][-1:]
-	
+	if(name==message.author.id and amount<0):
+		await bot.send_message(message.channel, 'Nice try.')
+		await bot.send_message(message.channel, "!mute <@" + message.author.id + "> " + str(-1*int(amount)) + timeUnit)
+		return
 	if(timeUnit=='s'):
 		for i in range(len(muteList)):
 			if(muteList[i].user == name):
