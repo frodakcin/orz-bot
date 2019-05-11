@@ -56,6 +56,16 @@ def insertMuted(x):
 	else:
 		raise TypeError("You can only insert Muted objects!")
 
+async def mute_success(bot, channel, mutedUsr, amo, TU, dur):
+	username = mutedUsr.display_name
+	for i in range(len(muteList)):
+		if(muteList[i].user == mutedUsr):
+			insertMuted(Muted(mutedUsr, mutedUsr.name, muteList.pop(i).endOfMute + dur))
+			await bot.send_message(channel, '{usrnm} has been muted for {amount} more {TU}(s).'.format(usrnm=username, amount=str(amo), TU=TU))
+			return
+	insertMuted(Muted(mutedUsr, mutedUsr.name, datetime.now() + timedelta(hours=amount)))
+	await bot.send_message(channel, '{usrnm} has been muted for {amount} {TU}(s).'.format(usrnm=username, amount=str(amo), TU=TU))
+	await bot.add_roles(mutedUsr, get_role(bot.get_server(ServerID).roles, MutedRoleName))
 
 async def mute(bot, message):
 	if(("moderator" in [y.name.lower() for y in message.mentions[0].roles]
@@ -65,8 +75,9 @@ async def mute(bot, message):
 			and message.mentions[0].id != message.author.id):
 		return
 	content = (message.content[5:]).split()
+	usr = message.mentions[0]
 	name = message.mentions[0].id
-	username = message.mentions[0].display_name
+	username = message.mentions[0].name
 	amount = int(content[1][:-1])
 	timeUnit = content[1][-1:]
 	if(name==message.author.id and amount<0):
@@ -74,35 +85,11 @@ async def mute(bot, message):
 		await bot.send_message(message.channel, "!mute <@" + message.author.id + "> " + str(-1*int(amount)) + timeUnit)
 		return
 	if(timeUnit=='s'):
-		for i in range(len(muteList)):
-			if(muteList[i].user == name):
-				insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(seconds=amount)))
-				await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' more second(s).')
-				return
-		insertMuted(Muted(name, username, datetime.now() + timedelta(seconds=amount)))
-		await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' second(s).')
-		await bot.add_roles(message.mentions[0], get_role(bot.get_server(ServerID).roles, MutedRoleName))
-		
+		mute_success(bot, message.channel, usr, amount, "second", timedelta(seconds=amount))
 	elif(timeUnit=='m'):
-		for i in range(len(muteList)):
-			if(muteList[i].user == name):
-				insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(minutes=amount)))
-				await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' more minute(s).')
-				return
-		insertMuted(Muted(name, username, datetime.now() + timedelta(minutes=amount)))
-		await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' minute(s).')
-		await bot.add_roles(message.mentions[0], get_role(bot.get_server(ServerID).roles, MutedRoleName))
-
+		mute_success(bot, message.channel, usr, amount, "minute", timedelta(minutes=amount))
 	elif(timeUnit=='h'):
-		for i in range(len(muteList)):
-			if(muteList[i].user == name):
-				insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(hours=amount)))
-				await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' more hour(s).')
-				return
-		insertMuted(Muted(name, username, datetime.now() + timedelta(hours=amount)))
-		await bot.send_message(message.channel, username+' has been muted for '+str(amount)+' hour(s).')
-		await bot.add_roles(message.mentions[0], get_role(bot.get_server(ServerID).roles, MutedRoleName))
-		
+		mute_success(bot, message.channel, usr, amount, "hour", timedelta(hour=amount))
 	else:
 		await bot.send_message(message.channel, "Invalid Syntax!")
 		raise ValueError(timeUnit + " is not a valid Time Unit.");
