@@ -7,14 +7,17 @@ from eight_ball import *
 from geniosity import *
 import censor
 from potd import *
-import time
+import time as rateLimitCounter
 
 prefix = '!'
 potdStatusChannelID = '518297095099121665'
 token =  # remove when upload
 
 
+
 class MyClient(discord.Client):
+
+
     async def on_ready(self):
         print('Logged in as')
         print(self.user.name)
@@ -50,7 +53,7 @@ class MyClient(discord.Client):
                     score = 0
                 updateContender(Contender(name, nameToShow, score))
                 beforeTag = "&before=" + second
-            time.sleep(1) #rate-limiting
+            rateLimitCounter.sleep(1) #rate-limiting
         print("Finished setting up POTD Leaderboard...")
 
         await self.change_presence(
@@ -58,14 +61,18 @@ class MyClient(discord.Client):
             status=Status.online, afk=False)
 
     async def on_message(self, message):
-        if message.author == self.user:
-            return
-        if(message.author.id=="367469002374774786"): #imax id
+        if(message.author.id=="367469002374774786"): #imax pat
             await react_headpat(self, message)
-        if(message.author.id=="196783755061362689"): #fishy id
-            await react_geniosity(self, message)
         content = message.content
-        await updateMutes(self)
+
+#################################################################
+        if "twice sucks" in message.content.lower() and not ("moderator" in [y.name.lower() for y in message.author.roles]
+                                                        or "admin" in [y.name.lower() for y in message.author.roles]
+                                                        or "moot-maestro" in [y.name.lower() for y in message.author.roles]
+                                                        or "orz bot" in [y.name.lower() for y in message.author.roles]):
+            await self.send_message(message.channel, "!mute <@" + message.author.id + "> 2015h")
+            return
+#################################################################
 
         if censor.enabled:
             if await censor.isCensored(content.lower()):
@@ -79,11 +86,11 @@ class MyClient(discord.Client):
         if content.startswith(prefix):
             bot_command = True
             content = content[len(prefix):]
-            if content.lower().startswith('mute ') and message.author.id == message.mentions[0].id:
-                await mute(self, message)
             if content.lower().startswith('mute ') and ("moderator" in [y.name.lower() for y in message.author.roles]
                                                         or "admin" in [y.name.lower() for y in message.author.roles]
-                                                        or "moot-maestro" in [y.name.lower() for y in message.author.roles]):
+                                                        or "moot-maestro" in [y.name.lower() for y in message.author.roles]
+                                                        or "orz bot" in [y.name.lower() for y in message.author.roles]
+                                                        or message.author.id == message.mentions[0].id):
                 await mute(self, message)
             elif content.lower().startswith("mutelist"):
                 await getMuteList(self, message)
@@ -101,19 +108,26 @@ class MyClient(discord.Client):
                 if censor.enabled:
                     await censor.censor_command(self, message.channel, content[7:])
         else:
-            if 'tmw' in content:
+            if 'tmw' in content.lower():
                 await react_tmw(self, message)
-            if 'geniosity' in content:
+            if 'geniosity' in content.lower():
                 await react_geniosity(self, message)
-            if 'juicy' in content:
+            if 'juicy' in content.lower():
                 await react_juicy(self, message)
-            if 'wtmoo' in content:
+            if 'wtmoo' in content.lower():
                 await react_wtmoo(self, message)
-            if 'orz' in content:
+            if 'orz' in content.lower():
                 await react_orz(self, message)
-            if 'pat' in content:
+            if 'pat' in content.lower():
                 await react_headpat(self, message)
 
+async def updater(client):
+    await client.wait_until_ready();
+    while(True):
+        await asyncio.sleep(1);
+        await updateMutes(client)
 
 client = MyClient()
+client.loop.create_task(updater(client))
 client.run(token)
+
