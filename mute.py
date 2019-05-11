@@ -122,6 +122,8 @@ async def updateMutes(bot):
 				muteList.pop(i)
 				i-=1
 				varLEN-=1
+			else:
+				break
 		except:
 			break
 	save()

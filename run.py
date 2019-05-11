@@ -123,9 +123,8 @@ class MyClient(discord.Client):
 
 async def updater(client):
     await client.wait_until_ready();
-    while(True):
-        await asyncio.sleep(1);
-        await updateMutes(client)
+    await asyncio.sleep(1);
+    await updateMutes(client)
 
 client = MyClient()
 client.loop.create_task(updater(client))
