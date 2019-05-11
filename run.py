@@ -122,10 +122,11 @@ class MyClient(discord.Client):
                 await react_headpat(self, message)
 
 async def updater(client):
-    await client.wait_until_ready();
-    await asyncio.sleep(2);
+    await client.wait_until_ready()
+    await asyncio.sleep(2)
     while not client.is_closed:
     	await updateMutes(client)
+    	await asyncio.sleep(1)
 
 client = MyClient()
 client.loop.create_task(updater(client))
