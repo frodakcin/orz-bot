@@ -15,6 +15,8 @@ async def make_prediction(bot, message):
 		response = 'Eyg is pedo.'
 	elif 'fishy' in parsed and 'geniosity' in parsed:
 		response = 'Fishy is geniosity.'
+	elif 'steph' in parsed and 'smart' in parsed:
+		response = 'Yes, Steph is super geniosity.'
 	# not rigged
 	else:
 		response = get_random_message()
