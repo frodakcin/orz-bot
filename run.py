@@ -77,6 +77,8 @@ class MyClient(discord.Client):
             return
         if "how" in message.content.lower() and ("get better" in message.content.lower() or "improve" in message.content.lower()):
             await self.send_message(message.channel, "Solve more problems and listen to Twice!")
+	if "no u" in message.content.lower() and not "orz bot" in [y.name.lower() for y in message.author.roles]:
+            await self.send_message(message.channel, "no u")
 	
         if censor.enabled:
             if await censor.isCensored(content.lower()):
@@ -100,14 +102,15 @@ class MyClient(discord.Client):
                                                "\"mutelist\" to get a list of muted users with their end of mute times in GMT.\n", inline=False)
                 e.add_field(name="Misc", value="\"echo <Message>\" to repeat a given text message.\n"+
                                                "\"8ball <Message>\" to get an 8-ball response for a message.\n" +
-                                               "\"give @<User> <Rolename>\" to give user specified role.", inline=False)
+                                               "\"give @<User> <Rolename>\" to give user specified role.\n"+
+                                               "\"remove @<User> <Rolename>\" to remove specified role from user.", inline=False)
                 await self.send_message(message.channel, embed=e)
-            elif content.lower().startswith('mute ') and ("moderator" in [y.name.lower() for y in message.author.roles]
-                                                        or "admin" in [y.name.lower() for y in message.author.roles]
-                                                        or "moot maestro" in [y.name.lower() for y in
-                                                                              message.author.roles]
-                                                        or "orz bot" in [y.name.lower() for y in message.author.roles]
-                                                        or message.author.id == message.mentions[0].id):
+            elif content.lower().startswith('mute ') and (
+                    "moderator" in [y.name.lower() for y in message.author.roles]
+                    or "admin" in [y.name.lower() for y in message.author.roles]
+                    or "moot maestro" in [y.name.lower() for y in message.author.roles]
+                    or "orz bot" in [y.name.lower() for y in message.author.roles]
+                    or message.author.id == message.mentions[0].id):
                 await mute(self, message)
             elif content.lower().startswith("mutelist"):
                 await getMuteList(self, message)
@@ -126,10 +129,16 @@ class MyClient(discord.Client):
                     await censor.censor_command(self, message.channel, content[7:])
             elif content.lower().startswith("give "):
                 role = content[27:].strip()
-                if(role == "pusheen fan"):
-                    await self.add_roles(message.mentions[0], get_role(self.get_server(ServerID).roles, "pusheen fan"))
-                if(role == "vmaddur worshipper"):
-                    await self.add_roles(message.mentions[0], get_role(self.get_server(ServerID).roles, "vmaddur worshipper"))
+                if("moderator" in [y.name.lower() for y in message.author.roles]
+                or "admin" in [y.name.lower() for y in message.author.roles]
+                or "moot maestro" in [y.name.lower() for y in message.author.roles]):
+                    await self.add_roles(message.mentions[0], get_role(self.get_server(ServerID).roles, role))
+            elif content.lower().startswith("remove "):
+                role = content[29:].strip()
+                if("moderator" in [y.name.lower() for y in message.author.roles]
+                or "admin" in [y.name.lower() for y in message.author.roles]
+                or "moot maestro" in [y.name.lower() for y in message.author.roles]):
+                    await self.remove_roles(message.mentions[0], get_role(self.get_server(ServerID).roles, role))
 
         else:
             if 'tmw' in content.lower():
@@ -149,6 +158,11 @@ class MyClient(discord.Client):
             if 'eggmel' in content.lower() or 'eygmel' in content.lower():
                 await react_ship(self, message)
 
+    async def on_member_join(self, member):
+        for channel in member.server.channels:
+            if channel.name == 'cow-worshipping':
+               await self.send_message(channel, "Welcowme <@" + member.id + ">! Please check <#519840263326138378>!")
+               await self.send_message(channel, ":pray: :cow:")
 
 async def updater(client):
     await client.wait_until_ready();
