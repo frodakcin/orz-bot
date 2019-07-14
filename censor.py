@@ -10,8 +10,7 @@ from string import *
 cannotEncodeText = "{0} cannot encode {1}"
 cannotDecodeText = "{0} cannot decode {1}"
 
-enabled = True
-
+enabled = False
 def assertType(x, t):
 	if not isinstance(t, type):
 		raise TypeError(t.__class__.__name__ + " is not a type")
