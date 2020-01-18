@@ -1,17 +1,18 @@
-from discord import *
-import asyncio
 import random
+
+from discord import *
+
 
 async def make_prediction(bot, message):
 	content = message.content
 	parsed = content.lower()
-	e = Embed(title=message.author.name + ' asked:', description=content[7:], 
-		color=0x9999ff)
+	e = Embed(title=message.author.name + ' asked:', description=content[7:],
+			  color=0x9999ff)
 
 	reponse = ''
 
 	# rigged
-	if 'eyg' in parsed and 'pedo' in parsed:
+	if 'eyg' in parsed or 'pedo' in parsed:
 		response = 'Eyg is pedo.'
 	elif 'fishy' in parsed and 'geniosity' in parsed:
 		response = 'Fishy is geniosity.'
@@ -22,7 +23,8 @@ async def make_prediction(bot, message):
 		response = get_random_message()
 
 	e.add_field(name='Answer:', value=response)
-	await bot.send_message(message.channel, embed=e)
+	await message.channel.send(embed=e)
+
 
 def get_random_message():
 	results = [
@@ -49,4 +51,3 @@ def get_random_message():
 	]
 
 	return random.choice(results)
-
