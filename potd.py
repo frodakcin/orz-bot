@@ -59,19 +59,19 @@ async def getContenderList(bot, message):
 						value=str(contenderList[i].points) + " points", inline=False)
 		except:
 			break
-	await bot.send_message(message.channel, embed=e)
+	await message.channel.send(embed=e)
 
 
 async def getContenderData(bot, message):
 	name = message.mentions[0].id
 	found = False
 	for i in range(len(contenderList)):
-		if (contenderList[i].user == Contender(name, name, 0).user):
+		if (int(contenderList[i].user)==name):
 			found = True
-			await bot.send_message(message.channel, contenderList[i].username + " has " + str(
+			await message.channel.send(contenderList[i].username + " has " + str(
 				contenderList[i].points) + " points for POTD")
 	if (not found):
-		await bot.send_message(message.channel, message.mentions[0].display_name + " has 0 points for POTD")
+		await message.channel.send(message.mentions[0].display_name + " has 0 points for POTD")
 
 
 async def updateLeaderboard(bot, message):
