@@ -8,10 +8,11 @@ from eight_ball import *
 from geniosity import *
 from mute import *
 from potd import *
+import sys
 
 prefix = '!'
 potdStatusChannelID = '518297095099121665'
-token = # remove when upload
+token =  # remove when upload
 
 class MyClient(discord.Client):
 
@@ -22,11 +23,11 @@ class MyClient(discord.Client):
         print('------')
         await updatePOTD()
         print("Finished setting up POTD Leaderboard...")
-        await self.change_presence(
-            game=discord.Game(name="Tmw orz", url="https://codeforces.com/profile/tmwilliamlin168", type=0),
-            status=Status.online, afk=False)
-	
+        await self.change_presence(activity=discord.Game(name="Tmw orz", url="https://codeforces.com/profile/tmwilliamlin168", type=0),
+                                   status=Status.online, afk=False)
+
     async def on_message(self, message):
+
         if (message.author.id == "367469002374774786"):  # imax id
             await react_headpat(self, message)
         if (message.author.id == '384304778173480960'): # karen id
@@ -40,18 +41,19 @@ class MyClient(discord.Client):
                 or "orz bot" in [y.name.lower() for y in message.author.roles])
 
         if "twice sucks" in message.content.lower() and not (powerful):
-            await self.send_message(message.channel, "!mute <@" + message.author.id + "> 2015h")
+            await message.channel.send("!give <@" + message.author.id + "> Muted")
             return
         if "how" in message.content.lower() and ("get better" in message.content.lower() or "improve" in message.content.lower()):
-            await self.send_message(message.channel, "Solve more problems and listen to Twice!")
+            await message.channel.send("Solve more problems and listen to Twice!")
         if "no u" in message.content.lower() and not "orz bot" in [y.name.lower() for y in message.author.roles]:
-            await self.send_message(message.channel, "no u")
+            await message.channel.send("no u")
 
         if censor.enabled:
             if await censor.isCensored(content.lower()):
                 print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
                 await self.delete_message(message)
                 return
+
         if message.channel.id == potdStatusChannelID:
             await react_geniosity(self, message)
             await updateLeaderboard(self, message)
@@ -72,21 +74,21 @@ class MyClient(discord.Client):
                                                "\"!8ball <Message>\" to get an 8-ball response for a message.\n" +
                                                "\"!give @<User> <Rolename>\" to add specified role to user.\n"+
                                                "\"!take @<User> <Rolename>\" to remove specified role from user.", inline=False)
-                await self.send_message(message.channel, embed=e)
+                await message.channel.send(embed=e)
             elif content.lower().startswith('mute '):
                 if(powerful or message.author.id == message.mentions[0].id):
                     await mute(self, message)
                 else:
-                    await self.send_message(message.channel, "Missing permissions!")
+                    await message.channel.send("Missing permissions!")
             elif content.lower().startswith('unmute '):
                 if(powerful):
                     await unmute(self, message)
                 else:
-                    await self.send_message(message.channel, "Missing permissions!")
+                    await message.channel.send("Missing permissions!")
             elif content.lower().startswith("mutelist"):
                 await getMuteList(self, message)
             elif content.startswith('echo ') and not "!" in content and not "@" in content:
-                await self.send_message(message.channel, content[5:])
+                await message.channel.send(content[5:])
             elif content.startswith('8ball'):
                 await make_prediction(self, message)
             elif content.lower().startswith('geniosity'):
@@ -99,44 +101,52 @@ class MyClient(discord.Client):
                 if censor.enabled:
                     await censor.censor_command(self, message.channel, content[7:])
             elif content.lower().startswith("give "):
-                role = content[27:].strip()
-                if(powerful):
-                    await self.add_roles(message.mentions[0], get_role(self.get_server(ServerID).roles, role))
-                    await self.send_message(message.channel, role + " has been given.")
-                else:
-                    await self.send_message(message.channel, "Missing permissions!")
+                try:
+                    roleName = content[27:].strip()
+                    role = discord.utils.get(self.get_guild(ServerID).roles,name=roleName)
+                    if(powerful):
+                        await self.get_guild(ServerID).get_member(message.mentions[0].id).add_roles(role)
+                        await message.channel.send(roleName + " has been given.")
+                    else:
+                        await message.channel.send("Missing permissions!")
+                except:
+                    await message.channel.send("The role is nonexistant or too powerful.")
             elif content.lower().startswith("take "):
-                role = content[27:].strip()
-                if(powerful):
-                    await self.remove_roles(message.mentions[0], get_role(self.get_server(ServerID).roles, role))
-                    await self.send_message(message.channel, role + " has been taken.")
-                else:
-                    await self.send_message(message.channel, "Missing permissions!")
+                try:
+                    roleName = content[27:].strip()
+                    role = discord.utils.get(self.get_guild(ServerID).roles,name=roleName)
+                    if(powerful):
+                        await self.get_guild(ServerID).get_member(message.mentions[0].id).remove_roles(role)
+                        await message.channel.send(roleName + " has been taken.")
+                    else:
+                        await message.channel.send("Missing permissions!")
+                except:
+                    await message.channel.send("The role is nonexistant or too powerful.")
         else:
-            if 'tmw' in content.lower():
-                await react_tmw(self, message)
-            if 'osity' in content.lower():
-                await react_geniosity(self, message)
-            if 'juicy' in content.lower():
-                await react_juicy(self, message)
-            if 'wtmoo' in content.lower():
-                await react_wtmoo(self, message)
-            if 'orz' in content.lower():
-                await react_orz(self, message)
-            if 'egg' in content.lower():
-                await react_egg(self, message)
-            if 'blobpat' in content.lower():
-                await react_headpat(self, message)
-            if 'eggmel' in content.lower() or 'eygmel' in content.lower():
-                await react_ship(self, message)
-            
+            try:
+                if 'tmw' in content.lower():
+                    await react_tmw(self, message)
+                if 'osity' in content.lower():
+                    await react_geniosity(self, message)
+                if 'juicy' in content.lower():
+                    await react_juicy(self, message)
+                if 'wtmoo' in content.lower():
+                    await react_wtmoo(self, message)
+                if 'orz' in content.lower():
+                    await react_orz(self, message)
+                if 'egg' in content.lower():
+                    await react_egg(self, message)
+                if 'blobpat' in content.lower():
+                    await react_headpat(self, message)
+                if 'eggmel' in content.lower() or 'eygmel' in content.lower() or 'stephy15' in content.lower() or 'sarren' in content.lower() or 'aermel' in content.lower() or 'starren' in content.lower() or 'kagebashy15' in content.lower() or 'eygirlwhoisunderage' in content.lower():
+                    await react_ship(self, message)
+            except:
+                pass
 
     async def on_member_join(self, member):
-        for channel in member.server.channels:
-            if channel.name == 'cow-worshipping':
-                await self.send_message(channel, "Welcowme <@" + member.id + ">! Please check <#519840263326138378>!")
-                await self.send_message(channel, ":pray: :cow:")
-                await checkMutes(self, member)
+        await self.get_guild(516125324711297024).get_channel(516126151023001610).send("Welcowme <@" + str(member.id) + ">! Please check <#519840263326138378>!")
+        await self.get_guild(516125324711297024).get_channel(516126151023001610).send(":pray: :cow:")
+        await checkMutes(self, member)
 
 async def updatePOTD():
     raw = open(PotdDataFilePath, "w")
@@ -150,7 +160,7 @@ async def updatePOTD():
         messages = json.loads(
             requests.get(
                 "https://discordapp.com/api/v6/channels/" + potdStatusChannelID + "/messages?limit=100" + beforeTag,
-                headers={"authorization": token}).text)
+                headers={"Authorization": "Bot " + token}).text)
         for i in messages:
             try:
                 message = i['content']
@@ -173,12 +183,12 @@ async def updatePOTD():
                 beforeTag = "&before=" + second
             except:
                 pass
-        rateLimitCounter.sleep(1)  # rate-limiting
+        rateLimitCounter.sleep(1) # rate-limiting
 
 async def updater(client):
     await client.wait_until_ready();
-    while not client.is_closed:
-        await asyncio.sleep(2)
+    while True:
+        await asyncio.sleep(1)
         await updateMutes(client)
 
 
