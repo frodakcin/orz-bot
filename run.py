@@ -8,6 +8,7 @@ from eight_ball import *
 from geniosity import *
 from mute import *
 from potd import *
+from starboard import *
 import sys
 
 prefix = '!'
@@ -147,6 +148,10 @@ class MyClient(discord.Client):
         await self.get_guild(516125324711297024).get_channel(516126151023001610).send("Welcowme <@" + str(member.id) + ">! Please check <#519840263326138378>!")
         await self.get_guild(516125324711297024).get_channel(516126151023001610).send(":pray: :cow:")
         await checkMutes(self, member)
+
+    async def on_reaction_add(self, reaction, user):
+        if reaction.emoji == STAR and reaction.count == STAR_LIMIT:
+            await post_embed(self, reaction.message)
 
 async def updatePOTD():
     raw = open(PotdDataFilePath, "w")
