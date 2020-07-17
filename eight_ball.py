@@ -12,9 +12,7 @@ async def make_prediction(bot, message):
 	reponse = ''
 
 	# rigged
-	if 'eyg' in parsed or 'pedo' in parsed:
-		response = 'Eyg is pedo.'
-	elif 'fishy' in parsed and 'geniosity' in parsed:
+	if 'fishy' in parsed and 'geniosity' in parsed:
 		response = 'Fishy is geniosity.'
 	elif 'steph' in parsed and 'smart' in parsed:
 		response = 'Yes, Steph is super geniosity.'
