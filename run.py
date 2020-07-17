@@ -13,7 +13,7 @@ import sys
 
 prefix = '!'
 potdStatusChannelID = '518297095099121665'
-token =  # remove when upload
+token = "" # remove when upload
 
 class MyClient(discord.Client):
 
@@ -27,7 +27,15 @@ class MyClient(discord.Client):
         await self.change_presence(activity=discord.Game(name="Tmw orz", url="https://codeforces.com/profile/tmwilliamlin168", type=0),
                                    status=Status.online, afk=False)
 
+    async def on_message_delete(self, message):
+    
+        if int(message.channel.id) == int(potdStatusChannelID):
+            await fixLeaderboard(self, message)
+            
     async def on_message(self, message):
+    
+        if("muted" in [y.name.lower() for y in message.author.roles]):
+            return
 
         if (message.author.id == "367469002374774786"):  # imax id
             await react_headpat(self, message)
@@ -55,7 +63,7 @@ class MyClient(discord.Client):
                 await self.delete_message(message)
                 return
 
-        if message.channel.id == potdStatusChannelID:
+        if int(message.channel.id) == int(potdStatusChannelID):
             await react_geniosity(self, message)
             await updateLeaderboard(self, message)
 
@@ -104,6 +112,8 @@ class MyClient(discord.Client):
             elif content.lower().startswith("give "):
                 try:
                     roleName = content[27:].strip()
+                    if(roleName == "Muted" or roleName == "moot maestro"):
+                        raise TypeError("This action is not possible.")
                     role = discord.utils.get(self.get_guild(ServerID).roles,name=roleName)
                     if(powerful):
                         await self.get_guild(ServerID).get_member(message.mentions[0].id).add_roles(role)
@@ -115,6 +125,8 @@ class MyClient(discord.Client):
             elif content.lower().startswith("take "):
                 try:
                     roleName = content[27:].strip()
+                    if(roleName == "Muted" or roleName == "moot maestro"):
+                        raise TypeError("This action is not possible.")
                     role = discord.utils.get(self.get_guild(ServerID).roles,name=roleName)
                     if(powerful):
                         await self.get_guild(ServerID).get_member(message.mentions[0].id).remove_roles(role)
@@ -149,10 +161,18 @@ class MyClient(discord.Client):
         await self.get_guild(516125324711297024).get_channel(516126151023001610).send(":pray: :cow:")
         await checkMutes(self, member)
 
+    async def on_member_update(self, before, after):
+        oldRoles = [int(y.id) for y in before.roles]
+        newRoles = [int(y.id) for y in after.roles]
+        if((MutedRoleName in oldRoles and not MutedRoleName in newRoles) or (not MutedRoleName in oldRoles and MutedRoleName in newRoles)):
+            await checkMutes(self, after)
+            
     async def on_reaction_add(self, reaction, user):
-        if reaction.emoji == STAR and reaction.count == STAR_LIMIT:
-            await post_embed(self, reaction.message)
-
+        if str(reaction.emoji) == STAR and int(reaction.count) == LIMIT:
+            await post_star(self, reaction.message)
+        elif str(reaction.emoji) == GENIOSITY and int(reaction.count) == LIMIT and int(reaction.message.channel.id) != int(potdStatusChannelID):
+            await post_geniosity(self, reaction.message)
+        
 async def updatePOTD():
     raw = open(PotdDataFilePath, "w")
     raw.write("[\n]")
@@ -170,7 +190,7 @@ async def updatePOTD():
             try:
                 message = i['content']
                 second = i['id']
-                name = i['mentions'][0]['id']
+                name = i['mentions'][0]['id'] 
                 nameToShow = i['mentions'][0]['username']
                 if ('pts' in message):
                     content = message[:message.index('pts')].strip()
@@ -181,9 +201,7 @@ async def updatePOTD():
                     score = 0
                 else:
                     content = message.strip()
-                    score = min(int(content.split()[-1]), maxPoints)
-                if (score < 0):
-                    score = 0
+                    score = min(int(content.split()[-1]), maxPoints) 
                 updateContender(Contender(name, nameToShow, score))
                 beforeTag = "&before=" + second
             except:
@@ -200,3 +218,4 @@ async def updater(client):
 client = MyClient()
 client.loop.create_task(updater(client))
 client.run(token)
+
