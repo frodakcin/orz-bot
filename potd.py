@@ -25,8 +25,6 @@ class Contender:
 
 	def updatePoints(self, gained):
 		newPoints = min(self.points + gained, maxPoints)
-		if (newPoints < 0):
-			newPoints = 0
 		self.points = newPoints
 
 	def toJSON(self):
@@ -36,7 +34,7 @@ class Contender:
 def updateContender(x):
 	if isinstance(x, Contender):
 		for i in range(len(contenderList)):
-			if (contenderList[i].user == x.user):
+			if (int(contenderList[i].user) == int(x.user)):
 				x.updatePoints(contenderList[i].points)
 				del contenderList[i]
 				break
@@ -71,23 +69,29 @@ async def getContenderData(bot, message):
 			await message.channel.send(contenderList[i].username + " has " + str(
 				contenderList[i].points) + " points for POTD")
 	if (not found):
-		await message.channel.send(message.mentions[0].display_name + " has 0 points for POTD")
+		await message.channel.send(message.mentions[0].name + " has 0 points for POTD")
 
 
 async def updateLeaderboard(bot, message):
-	try:
 		name = message.mentions[0].id
-		nameToShow = message.mentions[0].display_name
+		nameToShow = message.mentions[0].name
 		try:
 			content = message.content[:message.content.index('pts')].strip()
 		except:
 			content = message.content.strip()
 		score = min(int(content.split()[-1]), maxPoints)
-		if (score < 0):
-			score = 0
 		updateContender(Contender(name, nameToShow, score))
-	except:
-		pass
+
+async def fixLeaderboard(bot, message):
+		name = message.mentions[0].id
+		nameToShow = message.mentions[0].name
+		try:
+			content = message.content[:message.content.index('pts')].strip()
+		except:
+			content = message.content.strip()
+		score = min(int(content.split()[-1]), maxPoints)
+		updateContender(Contender(name, nameToShow, -score))
+
 
 
 # START IO
