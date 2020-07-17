@@ -2,6 +2,7 @@ import datetime
 from datetime import *
 import pytz
 import json
+import time
 import discord
 from discord import *
 
@@ -70,7 +71,7 @@ async def mute(bot, message):
     try:
         content = (message.content[5:]).split()
         name = message.mentions[0].id
-        username = message.mentions[0].display_name
+        username = message.mentions[0].name
         amount = int(content[1][:-1])
         timeUnit = content[1][-1:]
         role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
@@ -124,13 +125,20 @@ async def mute(bot, message):
 async def unmute(bot, message):
     role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
     name = message.mentions[0].id
-    username = message.mentions[0].display_name
+    username = message.mentions[0].name
+    found = False
     for i in range(len(muteList)):
         if (muteList[i].user == name):
-            await bot.get_guild(ServerID).get_member(muteList[i].user).remove_roles(role)
-            muteList.pop(i)
+            muteList[i].endOfMute = datetime.now(pytz.utc)
+            found = True
             break
-    await message.channel.send(username + " has been unmuted.")
+    if(found):
+        await message.channel.send(username + " has been unmuted.")
+    else:
+        await message.channel.send(username + " is not muted.")
+        for i in range(len(muteList)):
+            print(muteList[i].user)
+            print(name)
 
 async def getMuteList(bot, message):
     e = Embed(title="Mute List")
@@ -151,8 +159,12 @@ async def updateMutes(bot):
     role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
     while (i < varLEN):
         if (muteList[i].endOfMute.replace(tzinfo=pytz.utc) < datetime.now(pytz.utc)):
-            await bot.get_guild(ServerID).get_member(muteList[i].user).remove_roles(role)
-            muteList.pop(i)
+            x = muteList.pop(i).user
+            time.sleep(2)
+            try:
+                await bot.get_guild(ServerID).get_member(x).remove_roles(role)
+            except:
+                pass
             i -= 1
             varLEN -= 1
         i += 1
