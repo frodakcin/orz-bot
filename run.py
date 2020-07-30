@@ -109,6 +109,17 @@ class MyClient(discord.Client):
             elif content.startswith("censor "):
                 if censor.enabled:
                     await censor.censor_command(self, message.channel, content[7:])
+            elif content.startswith("cp "):
+                type = content[3:].strip()
+                role = discord.utils.get(self.get_guild(ServerID).roles, name = "cp only")
+                if type == "on":
+                    await message.author.add_roles(role)
+                    await message.channel.send("cp only has been given")
+                elif type == "off":
+                    await message.author.remove_roles(role)
+                    await message.channel.send("cp only has been taken")
+                else:
+                    await message.channel.send("invalid choice (on/off)")
             elif content.lower().startswith("give "):
                 try:
                     roleName = content[27:].strip()
