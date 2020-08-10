@@ -54,9 +54,6 @@ class MyClient(discord.Client):
             return
         if "how" in message.content.lower() and ("get better" in message.content.lower() or "improve" in message.content.lower()):
             await message.channel.send("Solve more problems and listen to Twice!")
-        if "no u" in message.content.lower() and not "orz bot" in [y.name.lower() for y in message.author.roles]:
-            await message.channel.send("no u")
-
         if censor.enabled:
             if await censor.isCensored(content.lower()):
                 print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
