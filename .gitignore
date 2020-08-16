@@ -177,3 +177,6 @@ $RECYCLE.BIN/
 
 # for VS Code Users
 .vscode/
+
+# Token
+bot_token.txt

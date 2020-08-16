@@ -11,9 +11,13 @@ from potd import *
 from starboard import *
 import sys
 
-prefix = '!'
+prefix = '[test]'
 potdStatusChannelID = '518297095099121665'
 token = "" # remove when upload
+
+# my sketch method to load token ~ SH
+with open("bot_token.txt", "r") as f:
+    token = f.readline()[:-1] # -1 to remove endl
 
 class MyClient(discord.Client):
 
