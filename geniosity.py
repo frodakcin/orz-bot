@@ -27,7 +27,7 @@ async def react_ship(bot, message):
 	await message.add_reaction('🚢')
 
 async def react_orz(bot, message):
-	await message.add_reaction('<:orz:745513885523509330>')
+	await message.add_reaction('<:orz:545130316067635200>')
 
 async def react_juicy(bot, message):
 	await message.add_reaction('<:juicy:545051411692650536>')

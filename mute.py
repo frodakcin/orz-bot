@@ -61,7 +61,7 @@ def insertMuted(x):
 
 
 async def mute(bot, message):
-    if (("moderator" in [y.name.lower() for y in message.mentions[0].roles]
+    if (("mooderator" in [y.name.lower() for y in message.mentions[0].roles]
          or "admin" in [y.name.lower() for y in message.mentions[0].roles]
          or "moot maestro" in [y.name.lower() for y in message.mentions[0].roles]
          or "orz bot" in [y.name.lower() for y in message.mentions[0].roles])
@@ -75,7 +75,7 @@ async def mute(bot, message):
         amount = int(content[1][:-1])
         timeUnit = content[1][-1:]
         role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
-        if ((name == message.author.id and amount < 0) and not ("moderator" in [y.name.lower() for y in message.mentions[0].roles]
+        if ((name == message.author.id and amount < 0) and not ("mooderator" in [y.name.lower() for y in message.mentions[0].roles]
              or "admin" in [y.name.lower() for y in message.mentions[0].roles]
              or "moot maestro" in [y.name.lower() for y in message.mentions[0].roles])):
             await message.channel.send('Nice try.')

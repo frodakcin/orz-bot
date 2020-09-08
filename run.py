@@ -44,7 +44,7 @@ class MyClient(discord.Client):
 
         content = message.content
 
-        powerful = ("moderator" in [y.name.lower() for y in message.author.roles]
+        powerful = ("mooderator" in [y.name.lower() for y in message.author.roles]
                 or "admin" in [y.name.lower() for y in message.author.roles]
                 or "moot maestro" in [y.name.lower() for y in message.author.roles]
                 or "orz bot" in [y.name.lower() for y in message.author.roles])
