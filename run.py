@@ -179,6 +179,9 @@ class MyClient(discord.Client):
                 pass
 
     async def on_member_join(self, member):
+        banlist = ['𝓑𝓲𝓼𝔀𝓪𝓭𝓮𝓿 𝓓𝓮𝓿 𝓡𝓸𝔂']
+        if any(banned in member.name for banned in banlist):
+            await member.ban()
         await self.get_guild(516125324711297024).get_channel(516126151023001610).send("Welcowme <@" + str(member.id) + ">! Please check <#519840263326138378>!")
         await self.get_guild(516125324711297024).get_channel(516126151023001610).send(":pray: :cow:")
         await checkMutes(self, member)
