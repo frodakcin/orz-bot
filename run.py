@@ -239,8 +239,8 @@ async def updater(client):
         await asyncio.sleep(1)
         await updateMutes(client)
 
-
-client = MyClient()
+intents = discord.Intents(guilds=True, members=True, messages=True, reactions=True)
+client = MyClient(intents=intents)
 client.loop.create_task(updater(client))
 client.run(token)
 
