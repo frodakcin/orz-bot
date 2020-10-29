@@ -191,7 +191,7 @@ def get_datetime(x):
 
 
 def decode_Muted(x):
-    return Muted(x["user"], x["name"], get_datetime(x["when"]))
+    return [Muted(person["user"], person["name"], get_datetime(person["when"])) for person in x]
 
 
 def save():
