@@ -68,59 +68,55 @@ async def mute(bot, message):
             and message.mentions[0].id != message.author.id):
         await message.channel.send("Target user has the ability to remove the mute!")
         return
-    try:
-        content = (message.content[5:]).split()
-        name = message.mentions[0].id
-        username = message.mentions[0].name
-        amount = int(content[1][:-1])
-        timeUnit = content[1][-1:]
-        role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
-        if ((name == message.author.id and amount < 0) and not ("mooderator" in [y.name.lower() for y in message.mentions[0].roles]
-             or "admin" in [y.name.lower() for y in message.mentions[0].roles]
-             or "moot maestro" in [y.name.lower() for y in message.mentions[0].roles])):
-            await message.channel.send('Nice try.')
-            await message.channel.send(
-                                   "!mute <@" + message.author.id + "> " + str(-1 * int(amount)) + timeUnit)
-            return
+    content = (message.content[5:]).split()
+    name = message.mentions[0].id
+    username = message.mentions[0].name
+    amount = int(content[1][:-1])
+    timeUnit = content[1][-1:]
+    role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
+    if ((name == message.author.id and amount < 0) and not ("mooderator" in [y.name.lower() for y in message.mentions[0].roles]
+         or "admin" in [y.name.lower() for y in message.mentions[0].roles]
+         or "moot maestro" in [y.name.lower() for y in message.mentions[0].roles])):
+        await message.channel.send('Nice try.')
+        await message.channel.send(
+                               "!mute <@" + message.author.id + "> " + str(-1 * int(amount)) + timeUnit)
+        return
 
-        if (timeUnit == 's'):
-            for i in range(len(muteList)):
-                if (muteList[i].user == name):
-                    insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(seconds=amount)))
-                    await message.channel.send(
-                                           username + ' has been muted for ' + str(amount) + ' more second(s).')
-                    return
-            insertMuted(Muted(name, username, datetime.now(pytz.utc) + timedelta(seconds=amount)))
-            await message.channel.send(username + ' has been muted for ' + str(amount) + ' second(s).')
-            await bot.get_guild(ServerID).get_member(name).add_roles(role)
+    if (timeUnit == 's'):        
+        await message.mentions[0].add_roles(role)
+        for i in range(len(muteList)):
+            if (muteList[i].user == name):
+                insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(seconds=amount)))
+                await message.channel.send(
+                                       username + ' has been muted for ' + str(amount) + ' more second(s).')
+                return
+        insertMuted(Muted(name, username, datetime.now(pytz.utc) + timedelta(seconds=amount)))
+        await message.channel.send(username + ' has been muted for ' + str(amount) + ' second(s).')
 
-        elif (timeUnit == 'm'):
-            for i in range(len(muteList)):
-                if (muteList[i].user == name):
-                    insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(minutes=amount)))
-                    await message.channel.send(
-                                           username + ' has been muted for ' + str(amount) + ' more minute(s).')
-                    return
-            insertMuted(Muted(name, username, datetime.now(pytz.utc) + timedelta(minutes=amount)))
-            await message.channel.send(username + ' has been muted for ' + str(amount) + ' minute(s).')
-            await bot.get_guild(ServerID).get_member(name).add_roles(role)
+    elif (timeUnit == 'm'):
+        await message.mentions[0].add_roles(role)
+        for i in range(len(muteList)):
+            if (muteList[i].user == name):
+                insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(minutes=amount)))
+                await message.channel.send(
+                                       username + ' has been muted for ' + str(amount) + ' more minute(s).')
+                return
+        insertMuted(Muted(name, username, datetime.now(pytz.utc) + timedelta(minutes=amount)))
+        await message.channel.send(username + ' has been muted for ' + str(amount) + ' minute(s).')
 
-        elif (timeUnit == 'h'):
-            for i in range(len(muteList)):
-                if (muteList[i].user == name):
-                    insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(hours=amount)))
-                    await message.channel.send(
-                                           username + ' has been muted for ' + str(amount) + ' more hour(s).')
-                    return
-            insertMuted(Muted(name, username, datetime.now(pytz.utc) + timedelta(hours=amount)))
-            await message.channel.send(username + ' has been muted for ' + str(amount) + ' hour(s).')
-            await bot.get_guild(ServerID).get_member(name).add_roles(role)
+    elif (timeUnit == 'h'):
+        await message.mentions[0].add_roles(role)
+        for i in range(len(muteList)):
+            if (muteList[i].user == name):
+                insertMuted(Muted(name, username, muteList.pop(i).endOfMute + timedelta(hours=amount)))
+                await message.channel.send(
+                                       username + ' has been muted for ' + str(amount) + ' more hour(s).')
+                return
+        insertMuted(Muted(name, username, datetime.now(pytz.utc) + timedelta(hours=amount)))
+        await message.channel.send(username + ' has been muted for ' + str(amount) + ' hour(s).')
 
-        else:
-            raise ValueError(timeUnit + " is not a valid Time Unit.");
-
-    except:
-        await message.channel.send("Invalid mute!")
+    else:
+        raise ValueError(timeUnit + " is not a valid Time Unit.");
 
 async def unmute(bot, message):
     role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
@@ -161,15 +157,17 @@ async def updateMutes(bot):
         if (muteList[i].endOfMute.replace(tzinfo=pytz.utc) < datetime.now(pytz.utc)):
             x = muteList.pop(i).user
             time.sleep(2)
-            try:
-                await bot.get_guild(ServerID).get_member(x).remove_roles(role)
-            except:
-                pass
+            temp = 655312161064615936
+            await bot.get_channel(temp).send("!internalunmute <@" + str(x) + ">") #send message
+            #await bot.get_user(x).remove_roles(role) 
             i -= 1
             varLEN -= 1
         i += 1
     save()
 
+async def internalUnmute(bot, message):
+    role = discord.utils.get(bot.get_guild(ServerID).roles,id=MutedRoleName)
+    await message.mentions[0].remove_roles(role)
 
 # START IO
 def encode_datetime(dt):
@@ -191,7 +189,7 @@ def get_datetime(x):
 
 
 def decode_Muted(x):
-    return [Muted(person["user"], person["name"], get_datetime(person["when"])) for person in x]
+    return Muted(x["user"], x["name"], get_datetime(x["when"]))
 
 
 def save():
