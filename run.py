@@ -45,7 +45,7 @@ class MyClient(discord.Client):
             await private_bot.send('old message:')
             await private_bot.send(before.content)
             await private_bot.send('-----------')
-            
+
     async def on_message(self, message):
     
         if("muted" in [y.name.lower() for y in message.author.roles]):
@@ -68,6 +68,9 @@ class MyClient(discord.Client):
             return
         if "how" in message.content.lower() and ("get better" in message.content.lower() or "improve" in message.content.lower()):
             await message.channel.send("Solve more problems and listen to Twice!")
+        if "no u" in message.content.lower() and not "orz bot" in [y.name.lower() for y in message.author.roles]:
+            await message.channel.send("no u")
+
         if censor.enabled:
             if await censor.isCensored(content.lower()):
                 print("Message \"" + content + "\" from user " + message.author.name + " has been deleted.")
@@ -121,12 +124,12 @@ class MyClient(discord.Client):
                 if censor.enabled:
                     await censor.censor_command(self, message.channel, content[7:])
             elif content.startswith("cp "):
-                type = content[3:].strip()
+                tipe = content[3:].strip()
                 role = discord.utils.get(self.get_guild(ServerID).roles, name = "cp only")
-                if type == "on":
+                if tipe == "on":
                     await message.author.add_roles(role)
                     await message.channel.send("cp only has been given")
-                elif type == "off":
+                elif tipe == "off":
                     await message.author.remove_roles(role)
                     await message.channel.send("cp only has been taken")
                 else:
@@ -135,10 +138,10 @@ class MyClient(discord.Client):
                 try:
                     roleName = content[27:].strip()
                     if(roleName == "Muted" or roleName == "moot maestro"):
-                        raise TypeError("This action is not possible.")
+                        raise TypeError("You cannot give a Mute this way.")
                     role = discord.utils.get(self.get_guild(ServerID).roles,name=roleName)
-                    if(powerful):
-                        await self.get_guild(ServerID).get_member(message.mentions[0].id).add_roles(role)
+                    if(powerful):                        
+                        await message.mentions[0].add_roles(role)
                         await message.channel.send(roleName + " has been given.")
                     else:
                         await message.channel.send("Missing permissions!")
@@ -148,15 +151,17 @@ class MyClient(discord.Client):
                 try:
                     roleName = content[27:].strip()
                     if(roleName == "Muted" or roleName == "moot maestro"):
-                        raise TypeError("This action is not possible.")
+                        raise TypeError("You cannot take a Mute this way.")
                     role = discord.utils.get(self.get_guild(ServerID).roles,name=roleName)
                     if(powerful):
-                        await self.get_guild(ServerID).get_member(message.mentions[0].id).remove_roles(role)
+                        await message.mentions[0].remove_roles(role)
                         await message.channel.send(roleName + " has been taken.")
                     else:
                         await message.channel.send("Missing permissions!")
                 except:
                     await message.channel.send("The role is nonexistant or too powerful.")
+            elif content.lower().startswith("internalunmute ") and "orz bot" in [y.name.lower() for y in message.author.roles]:
+                await internalUnmute(self, message)
         else:
             try:
                 if 'tmw' in content.lower():
@@ -182,8 +187,8 @@ class MyClient(discord.Client):
         banlist = ['𝓑𝓲𝓼𝔀𝓪𝓭𝓮𝓿 𝓓𝓮𝓿 𝓡𝓸𝔂', '𝗕𝗶𝘀𝘄𝗮𝗱𝗲𝘃 𝗗𝗲𝘃 𝗥𝗼𝘆']
         if any(banned in member.name for banned in banlist):
             await member.ban()
-        await self.get_guild(516125324711297024).get_channel(516126151023001610).send("Welcowme <@" + str(member.id) + ">! Please check <#519840263326138378>!")
-        await self.get_guild(516125324711297024).get_channel(516126151023001610).send(":pray: :cow:")
+        await self.get_channel(516126151023001610).send("Welcowme <@" + str(member.id) + ">! Please check <#519840263326138378>!")
+        await self.get_channel(516126151023001610).send(":pray: :cow:")
         await checkMutes(self, member)
 
     async def on_member_update(self, before, after):
@@ -226,7 +231,7 @@ async def updatePOTD():
                     score = 0
                 else:
                     content = message.strip()
-                    score = min(int(content.split()[-1]), maxPoints) 
+                    score = min(int(content.split()[-1]), maxPoints)
                 updateContender(Contender(name, nameToShow, score))
                 beforeTag = "&before=" + second
             except:
