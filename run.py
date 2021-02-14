@@ -172,7 +172,7 @@ class MyClient(discord.Client):
                     await react_juicy(self, message)
                 if 'wtmoo' in content.lower():
                     await react_wtmoo(self, message)
-                if content.lower().count('orz') > content.lower().count('antiorz'):
+                if content.lower().count('orz') >= content.lower().count('antiorz'):
                     await react_orz(self, message)
                 if 'egg' in content.lower():
                     await react_egg(self, message)
