@@ -32,19 +32,17 @@ class MyClient(discord.Client):
         if int(message.channel.id) == int(potdStatusChannelID):
             await fixLeaderboard(self, message)
 
-        if len(message.content) >= 1700:
-            private_bot = self.get_channel(655312161064615936)
-            await private_bot.send('deleted by ' + str(message.author))
-            await private_bot.send(message.content)
-            await private_bot.send('-----------')
+        private_bot = self.get_channel(550190785358856223)
+        await private_bot.send('deleted by ' + str(message.author))
+        await private_bot.send(message.content)
+        await private_bot.send('-----------')
 
     async def on_message_edit(self, before, after):
-        if len(before.content) >= 1700:
-            private_bot = self.get_channel(655312161064615936)
-            await private_bot.send('edited by ' + str(before.author))
-            await private_bot.send('old message:')
-            await private_bot.send(before.content)
-            await private_bot.send('-----------')
+        private_bot = self.get_channel(550190785358856223)
+        await private_bot.send('edited by ' + str(before.author))
+        await private_bot.send('old message:')
+        await private_bot.send(before.content)
+        await private_bot.send('-----------')
 
     async def on_message(self, message):
     
