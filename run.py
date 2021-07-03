@@ -14,6 +14,7 @@ import sys
 prefix = '!'
 potdStatusChannelID = '518297095099121665'
 token = "" # remove when upload
+logs_channel = 550190785358856223
 
 class MyClient(discord.Client):
 
@@ -32,17 +33,19 @@ class MyClient(discord.Client):
         if int(message.channel.id) == int(potdStatusChannelID):
             await fixLeaderboard(self, message)
 
-        private_bot = self.get_channel(550190785358856223)
-        await private_bot.send('deleted by ' + str(message.author))
-        await private_bot.send(message.content)
-        await private_bot.send('-----------')
+        if message.channel.id != logs_channel:
+            private_bot = self.get_channel(logs_channel)
+            await private_bot.send('deleted by ' + str(message.author))
+            await private_bot.send(message.content)
+            await private_bot.send('-----------')
 
     async def on_message_edit(self, before, after):
-        private_bot = self.get_channel(550190785358856223)
-        await private_bot.send('edited by ' + str(before.author))
-        await private_bot.send('old message:')
-        await private_bot.send(before.content)
-        await private_bot.send('-----------')
+        if before.channel.id != logs_channel:
+            private_bot = self.get_channel(logs_channel)
+            await private_bot.send('edited by ' + str(before.author))
+            await private_bot.send('old message:')
+            await private_bot.send(before.content)
+            await private_bot.send('-----------')
 
     async def on_message(self, message):
     
