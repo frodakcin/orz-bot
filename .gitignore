@@ -177,3 +177,7 @@ $RECYCLE.BIN/
 
 # for VS Code Users
 .vscode/
+
+# ignore JSON files for storing information
+potd.json
+mute.json
