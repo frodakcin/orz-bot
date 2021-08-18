@@ -183,7 +183,7 @@ class MyClient(discord.Client):
                     await react_egg(self, message)
                 if 'blobpat' in content.lower():
                     await react_headpat(self, message)
-                if 'eggmel' in content.lower() or 'eygmel' in content.lower() or 'stephy15' in content.lower() or 'sarren' in content.lower() or 'aermel' in content.lower() or 'starren' in content.lower() or 'kagebashy15' in content.lower() or 'eygirlwhoisunderage' in content.lower():
+                if 'eggmel' in content.lower() or 'eygmel' in content.lower() or 'sarren' in content.lower() or 'aermel' in content.lower() or 'starren' in content.lower() or 'kagebashy15' in content.lower() or 'eygirlwhoisunderage' in content.lower():
                     await react_ship(self, message)
             except:
                 pass
