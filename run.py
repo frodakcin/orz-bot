@@ -71,6 +71,10 @@ class MyClient(discord.Client):
             await message.channel.send("Solve more problems and listen to Twice!")
         if "no u" in message.content.lower() and not "orz bot" in [y.name.lower() for y in message.author.roles]:
             await message.channel.send("no u")
+        if "train.usaco.org" in message.content.lower():
+            await message.channel.send("Orz Bot detected that you are sending a link to the USACO training site! For your safety, "
+                "it is best NOT to share links since anyone can log into your account with the URL. If you are sharing a problem statement, "
+                "send screenshots or copy/paste the text into pastebin or another similar site.")
 
         if censor.enabled:
             if await censor.isCensored(content.lower()):
