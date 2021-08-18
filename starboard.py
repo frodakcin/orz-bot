@@ -1,7 +1,7 @@
 from discord import *
 import asyncio 
 
-LIMIT = 4
+LIMIT = 6
 GALLERY = 577381775739846676
 STAR = '⭐'
 GENIOSITY = '<:geniosity:516424110205566987>'
@@ -14,10 +14,13 @@ async def post_star(bot, message):
         MSGS.add(message.id)
 
 async def post_geniosity(bot, message):
+    pass
+    '''
     if message.id not in MSGS:
         embed = make_geniosity(message)
         await bot.get_channel(GALLERY).send(embed=embed)
         MSGS.add(message.id)
+    '''
 
 
 def make_star(message):
